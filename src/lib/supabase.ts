@@ -205,6 +205,131 @@ export async function fetchBlogPosts(): Promise<SupabaseBlogPost[]> {
   return (data || []).map(mapRow);
 }
 
+// --- Laptops helpers (fetch, upsert, delete) ---
+export async function fetchLaptops(): Promise<any[]> {
+  const supabase = getSupabaseClient();
+  const { data, error } = await supabase.from('laptops').select('*');
+  if (error) throw error;
+  const mapRow = (row: any) => ({
+    ...row,
+    imageUrl: row.imageurl ?? row.imageUrl ?? '',
+    galleryImages: row.galleryimages ?? row.galleryImages ?? row.gallery_images ?? null,
+    imagePublicId: row.image_public_id ?? row.imagepublicid ?? null,
+    galleryPublicIds: row.gallery_public_ids ?? row.gallerypublicids ?? row.gallery_publicids ?? null,
+    created_at: row.created_at ?? row.createdAt ?? null,
+  });
+  return (data || []).map(mapRow);
+}
+
+export async function upsertLaptop(laptop: any): Promise<any> {
+  const isBrowser = typeof window !== 'undefined';
+  if (isBrowser) {
+    try {
+      const supabase = getSupabaseClient();
+      let sessionToken = '';
+      try { const { data } = await supabase.auth.getSession(); sessionToken = data?.session?.access_token || ''; } catch (e) { sessionToken = ''; }
+      if (!sessionToken) throw new Error('Missing session token. Please login as admin and refresh the page before saving.');
+
+      const resp = await fetch('/api/upsert-laptop', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${sessionToken}` },
+        body: JSON.stringify(laptop),
+      });
+      if (!resp.ok) {
+        const text = await resp.text().catch(() => null);
+        const errMsg = `[UPsertLaptop] server endpoint failed ${resp.status} ${text || ''}`;
+        console.warn(errMsg);
+        throw new Error(errMsg);
+      }
+      const json = await resp.json();
+      const row = json?.data ?? null;
+      if (row) {
+        return {
+          ...row,
+          imageUrl: row.imageurl ?? row.imageUrl ?? '',
+          galleryImages: row.galleryimages ?? row.galleryImages ?? row.gallery_images ?? null,
+          imagePublicId: row.image_public_id ?? row.imagepublicid ?? null,
+          galleryPublicIds: row.gallery_public_ids ?? row.gallerypublicids ?? row.gallery_publicids ?? null,
+          created_at: row.created_at ?? row.createdAt ?? null,
+        };
+      }
+    } catch (err) {
+      console.warn('[UPsertLaptop] server endpoint call failed, falling back to client upsert', err);
+    }
+    // fall through to client-side upsert as last resort
+  }
+
+  const supabase = getSupabaseClient();
+  const payload: any = {};
+  const idToUse = (laptop && laptop.id && laptop.id !== 0) ? laptop.id : Date.now();
+  Object.keys(laptop).forEach(k => {
+    if (k === 'imagePublicId') {
+      payload['image_public_id'] = (laptop as any)[k];
+    } else if (k === 'galleryPublicIds') {
+      payload['gallery_public_ids'] = (laptop as any)[k];
+    } else {
+      const newKey = k === 'id' ? 'id' : k.toLowerCase();
+      payload[newKey] = (laptop as any)[k];
+    }
+  });
+  payload.id = idToUse;
+  // Ensure slug exists
+  if (!payload.slug || payload.slug === '') {
+    const slugify = (input: string) => {
+      if (!input) return String(idToUse);
+      return input.toString().toLowerCase()
+        .normalize('NFKD')
+        .replace(/\p{Diacritic}/gu, '')
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '')
+        .replace(/-{2,}/g, '-')
+        .slice(0, 80);
+    };
+    payload.slug = `${idToUse}-${slugify(laptop.name || laptop.title || String(idToUse))}`;
+  }
+  const { data, error } = await supabase.from('laptops').upsert(payload, { onConflict: 'id' }).select();
+  if (error) throw error;
+  const row = data?.[0] ?? null;
+  if (!row) return null;
+  return {
+    ...row,
+    imageUrl: row.imageurl ?? row.imageUrl ?? '',
+    galleryImages: row.galleryimages ?? row.galleryImages ?? row.gallery_images ?? null,
+    imagePublicId: row.image_public_id ?? row.imagepublicid ?? null,
+    galleryPublicIds: row.gallery_public_ids ?? row.gallerypublicids ?? row.gallery_publicids ?? null,
+    created_at: row.created_at ?? row.createdAt ?? null,
+  };
+}
+
+export async function deleteLaptop(id: number): Promise<void> {
+  const isBrowser = typeof window !== 'undefined';
+  if (isBrowser) {
+    try {
+      const supabase = getSupabaseClient();
+      let sessionToken = '';
+      try { const { data } = await supabase.auth.getSession(); sessionToken = data?.session?.access_token || ''; } catch (e) { sessionToken = ''; }
+      if (!sessionToken) throw new Error('Missing session token. Please login as admin and refresh the page before deleting.');
+
+      const resp = await fetch('/api/delete-laptop', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${sessionToken}` },
+        body: JSON.stringify({ id })
+      });
+      if (!resp.ok) {
+        const txt = await resp.text().catch(() => null);
+        throw new Error(`[DeleteLaptop] server endpoint failed ${resp.status} ${txt || ''}`);
+      }
+      return;
+    } catch (err) {
+      console.warn('[DeleteLaptop] server endpoint call failed, falling back to client delete', err);
+    }
+  }
+
+  const supabase = getSupabaseClient();
+  const { error } = await supabase.from('laptops').delete().eq('id', id);
+  if (error) throw error;
+}
+
 export async function upsertBlogPost(post: any): Promise<any> {
   // Prefer calling the server-side endpoint from the browser so we can use service_role key
   const isBrowser = typeof window !== 'undefined';
