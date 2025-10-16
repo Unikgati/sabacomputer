@@ -181,7 +181,7 @@ export const LaptopDetailPage: React.FC<LaptopDetailPageProps> = ({ laptop, setP
               </table>
 
               {(laptop.accessories && laptop.accessories.length > 0) && (
-                <section className="accessories-section" style={{ marginTop: '1rem' }}>
+                <section className="accessories-section">
                   <h3>Kelengkapan</h3>
                   <div className="accessories-badges" aria-label="Kelengkapan">
                     {(laptop.accessories || []).map((a:string, i:number) => (
@@ -192,7 +192,7 @@ export const LaptopDetailPage: React.FC<LaptopDetailPageProps> = ({ laptop, setP
               )}
 
               {(laptop.features && laptop.features.length > 0) && (
-                <section className="features-section" style={{ marginTop: '1rem' }}>
+                <section className="features-section">
                   <h3>Kelebihan</h3>
                   <div className="features-badges" aria-label="Kelebihan">
                     {(laptop.features || []).map((f:string, i:number) => (
