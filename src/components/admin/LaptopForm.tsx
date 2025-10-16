@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useToast } from '../../components/Toast';
 import ReactQuill from 'react-quill';
 import { XIcon, UploadCloudIcon, StarIcon, SpinnerIcon } from '../Icons';
@@ -33,12 +33,59 @@ export const LaptopForm: React.FC<LaptopFormProps> = ({ laptop, onSave, onCancel
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [customInclusion, setCustomInclusion] = useState('');
     const [isSaving, setIsSaving] = useState(false);
+    const [specSuggestions, setSpecSuggestions] = useState<Record<string, string[]>>({ ram: [], storage: [], cpu: [], displayInch: [] });
 
     const handleChange = (e: any) => {
         const { name, value } = e.target;
         if (name === 'price') setFormData((p: any) => ({ ...p, [name]: value === '' ? '' : Number(value) }));
         else if (name === 'displayInch') setFormData((p: any) => ({ ...p, [name]: value === '' ? '' : Number(value) }));
         else setFormData((p: any) => ({ ...p, [name]: value }));
+    };
+
+    // Load suggestions from localStorage on mount
+    useEffect(() => {
+        try {
+            const raw = localStorage.getItem('laptop_spec_suggestions');
+            if (raw) {
+                const parsed = JSON.parse(raw);
+                setSpecSuggestions((prev) => ({ ...prev, ...parsed }));
+            }
+        } catch (e) {
+            // ignore
+        }
+    }, []);
+
+    const extractSnippet = (text: string) => {
+        if (!text) return '';
+        const words = String(text).trim().split(/\s+/).filter(Boolean);
+        if (words.length === 0) return '';
+        // take last up to 4 words
+        const last = words.slice(Math.max(0, words.length - 4));
+        return last.join(' ');
+    };
+
+    const saveSuggestion = (field: string, value: string) => {
+        const snippet = extractSnippet(value);
+        if (!snippet) return;
+        setSpecSuggestions(prev => {
+            const current = prev[field] || [];
+            const dedup = [snippet, ...current.filter(s => s !== snippet)].slice(0, 10);
+            const next = { ...prev, [field]: dedup };
+            try { localStorage.setItem('laptop_spec_suggestions', JSON.stringify(next)); } catch (e) {}
+            return next;
+        });
+    };
+
+    const handleSpecBadgeClick = (field: string, val: string) => {
+        setFormData((p: any) => ({ ...p, [field]: val }));
+    };
+
+    // Price input: format with dots every 3 digits for display, keep numeric in state
+    const handlePriceInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const raw = String(e.target.value || '');
+        const digits = raw.replace(/[^0-9]/g, '');
+        const num = digits === '' ? '' : Number(digits);
+        setFormData((p: any) => ({ ...p, price: num }));
     };
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -142,7 +189,15 @@ export const LaptopForm: React.FC<LaptopFormProps> = ({ laptop, onSave, onCancel
                 <div className="form-group"><label>Kategori</label><input name="categories" value={(formData.categories || []).join(', ')} onChange={(e)=> setFormData((p:any)=>({...p, categories: String(e.target.value).split(',').map((s:string)=>s.trim()).filter(Boolean)}))} placeholder="pisahkan dengan koma" /></div>
 
                 <div className="form-row-compact" style={{gridTemplateColumns: '1fr 1fr'}}>
-                    <div className="form-group"><label>Harga (IDR)</label><input name="price" value={formData.price} onChange={handleChange} inputMode="numeric" /></div>
+                    <div className="form-group"><label>Harga (IDR)</label>
+                        <input
+                            name="price"
+                            value={formData.price === '' ? '' : new Intl.NumberFormat('id-ID').format(Number(formData.price))}
+                            onChange={handlePriceInputChange}
+                            inputMode="numeric"
+                            placeholder="cth: 1.500.000"
+                        />
+                    </div>
                     <div className="form-group"><label>Kelengkapan / yang didapat</label>
                         {formData.inclusions && formData.inclusions.length > 0 && (<div className="selected-facilities-list">{formData.inclusions.map((inc:string)=> (<div key={inc} className="selected-facility-item"><span>{inc}</span><button type="button" onClick={()=>removeInclusion(inc)}>&times;</button></div>))}</div>)}
                         <div style={{display:'flex', gap:8, marginTop:8}}><input value={customInclusion} onChange={(e)=>setCustomInclusion(e.target.value)} placeholder="Tambah kelengkapan..." /> <button type="button" className="btn btn-secondary" onClick={addInclusion}>Tambah</button></div>
@@ -155,21 +210,49 @@ export const LaptopForm: React.FC<LaptopFormProps> = ({ laptop, onSave, onCancel
                         <div className="form-row-compact" style={{ gridTemplateColumns: '1fr 1fr' }}>
                             <div className="form-group">
                                 <label>RAM</label>
-                                <input name="ram" value={formData.ram} onChange={handleChange} placeholder="cth: 8GB, 16GB" />
+                                <input name="ram" value={formData.ram} onChange={handleChange} onBlur={(e)=> saveSuggestion('ram', String(e.target.value))} placeholder="cth: 8GB, 16GB" />
+                                {specSuggestions.ram && specSuggestions.ram.length > 0 && (
+                                    <div className="suggestion-badges">
+                                        {specSuggestions.ram.map((s) => (
+                                            <button type="button" key={s} className="suggestion-badge" onClick={() => handleSpecBadgeClick('ram', s)}>{s}</button>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
                             <div className="form-group">
                                 <label>Storage</label>
-                                <input name="storage" value={formData.storage} onChange={handleChange} placeholder="cth: 256GB SSD" />
+                                <input name="storage" value={formData.storage} onChange={handleChange} onBlur={(e)=> saveSuggestion('storage', String(e.target.value))} placeholder="cth: 256GB SSD" />
+                                {specSuggestions.storage && specSuggestions.storage.length > 0 && (
+                                    <div className="suggestion-badges">
+                                        {specSuggestions.storage.map((s) => (
+                                            <button type="button" key={s} className="suggestion-badge" onClick={() => handleSpecBadgeClick('storage', s)}>{s}</button>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
                         </div>
                         <div className="form-row-compact" style={{ gridTemplateColumns: '1fr 1fr' }}>
                             <div className="form-group">
                                 <label>CPU</label>
-                                <input name="cpu" value={formData.cpu} onChange={handleChange} placeholder="cth: Intel i5-1135G7" />
+                                <input name="cpu" value={formData.cpu} onChange={handleChange} onBlur={(e)=> saveSuggestion('cpu', String(e.target.value))} placeholder="cth: Intel i5-1135G7" />
+                                {specSuggestions.cpu && specSuggestions.cpu.length > 0 && (
+                                    <div className="suggestion-badges">
+                                        {specSuggestions.cpu.map((s) => (
+                                            <button type="button" key={s} className="suggestion-badge" onClick={() => handleSpecBadgeClick('cpu', s)}>{s}</button>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
                             <div className="form-group">
                                 <label>Display (inch)</label>
-                                <input name="displayInch" value={formData.displayInch} onChange={handleChange} inputMode="decimal" placeholder="cth: 14" />
+                                <input name="displayInch" value={formData.displayInch} onChange={handleChange} onBlur={(e)=> saveSuggestion('displayInch', String(e.target.value))} inputMode="decimal" placeholder="cth: 14" />
+                                {specSuggestions.displayInch && specSuggestions.displayInch.length > 0 && (
+                                    <div className="suggestion-badges">
+                                        {specSuggestions.displayInch.map((s) => (
+                                            <button type="button" key={s} className="suggestion-badge" onClick={() => handleSpecBadgeClick('displayInch', s)}>{s}</button>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
                         </div>
                         <div className="form-group">
