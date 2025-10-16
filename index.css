@@ -1465,7 +1465,8 @@ body.dark .wishlist-btn:hover {
     padding: 0.85rem 1rem;
     width: 40%;
     font-weight: 600;
-    color: var(--text-secondary);
+    /* make header follow primary text so it remains legible in both themes */
+    color: var(--text-primary);
     background: transparent;
 }
 .specs-card .specs-table td.specs-val {
@@ -1490,7 +1491,18 @@ body.dark .specs-card .specs-table tr.specs-row:nth-child(even) {
 /* Rounded corners for the specs card and responsive table */
 .specs-card { border-radius: 12px; overflow: hidden; }
 .specs-card .specs-table { width: 100%; border-collapse: separate; border-spacing: 0; }
+.pecs-table { }
 .specs-card .specs-table th, .specs-card .specs-table td { border: none; }
+
+/* Add visible separators between rows using theme border color */
+.specs-card .specs-table tr.specs-row th.specs-key,
+.specs-card .specs-table tr.specs-row td.specs-val {
+    border-bottom: 1px solid var(--border-color);
+}
+.specs-card .specs-table tr.specs-row:last-child th.specs-key,
+.specs-card .specs-table tr.specs-row:last-child td.specs-val {
+    border-bottom: none;
+}
 
 .booking-bar-content {
     display: flex;
