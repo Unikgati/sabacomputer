@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS public.laptops (
   grade text,
   features jsonb DEFAULT '[]'::jsonb,
   accessories text[] DEFAULT ARRAY[]::text[],
+  in_stock boolean DEFAULT true,
   created_at timestamptz NOT NULL DEFAULT now(),
   updated_at timestamptz NOT NULL DEFAULT now(),
   image_public_id text,
@@ -37,6 +38,8 @@ ALTER TABLE IF EXISTS public.laptops
   ADD COLUMN IF NOT EXISTS grade text,
   ADD COLUMN IF NOT EXISTS features jsonb DEFAULT '[]'::jsonb,
   ADD COLUMN IF NOT EXISTS accessories text[] DEFAULT ARRAY[]::text[];
+  ALTER TABLE IF EXISTS public.laptops
+    ADD COLUMN IF NOT EXISTS in_stock boolean DEFAULT true;
 
 -- Enable row level security and policies
 ALTER TABLE public.laptops ENABLE ROW LEVEL SECURITY;

@@ -69,6 +69,8 @@ export default async function handler(req, res) {
     keyMap.displayInch = 'display_inch';
     keyMap.condition = 'condition';
     keyMap.features = 'features';
+  // inventory
+  keyMap.inStock = 'in_stock';
 
     const safePayload = {};
     for (const srcKey of Object.keys(payload)) {
@@ -96,6 +98,20 @@ export default async function handler(req, res) {
     // Ensure features remains JSON (stringify if array)
     if ('features' in safePayload && Array.isArray(safePayload.features)) {
       try { safePayload.features = JSON.stringify(safePayload.features); } catch (e) { /* ignore */ }
+    }
+
+    // normalize in_stock to boolean if string/number provided
+    if ('in_stock' in safePayload) {
+      const v = safePayload.in_stock;
+      if (typeof v === 'string') {
+        const lower = v.trim().toLowerCase();
+        if (lower === 'false' || lower === '0' || lower === 'no') safePayload.in_stock = false;
+        else safePayload.in_stock = true;
+      } else if (typeof v === 'number') {
+        safePayload.in_stock = Boolean(v);
+      } else {
+        safePayload.in_stock = !!v;
+      }
     }
 
     const extractCloudinaryPublicId = (url) => {

@@ -26,6 +26,8 @@ export const LaptopForm: React.FC<LaptopFormProps> = ({ laptop, onSave, onCancel
         grade: laptop.grade || '',
         features: laptop.features || [],
         accessories: laptop.accessories || []
+        ,
+        inStock: typeof laptop.inStock === 'boolean' ? laptop.inStock : (laptop.in_stock === undefined ? true : Boolean(laptop.in_stock))
     };
     const [formData, setFormData] = useState<any>(initial);
     const [imageUrls, setImageUrls] = useState<string[]>((laptop.galleryImages && laptop.galleryImages.length > 0) ? laptop.galleryImages : (laptop.imageUrl ? [laptop.imageUrl] : []));
@@ -242,13 +244,25 @@ export const LaptopForm: React.FC<LaptopFormProps> = ({ laptop, onSave, onCancel
             condition: formData.condition || 'second',
             grade: formData.grade || '',
             accessories: formData.accessories || []
+            ,
+            inStock: typeof formData.inStock === 'boolean' ? formData.inStock : (formData.in_stock === undefined ? true : Boolean(formData.in_stock))
         };
         try { await onSave(finalData); } catch (err:any) { const msg = (err && err.message) ? err.message : 'Gagal menyimpan laptop'; try { showToast(msg, 'error'); } catch {} }
     setIsSaving(false); }, 1200); };
 
     return (
         <div className="admin-card">
-            <div className="admin-form-header"><h2>{formData.id === 0 ? 'Tambah' : 'Edit'} Laptop</h2></div>
+            <div className="admin-form-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <h2 style={{ margin: 0 }}>{formData.id === 0 ? 'Tambah' : 'Edit'} Laptop</h2>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: '0.95rem' }}>
+                        <span style={{ fontSize: '0.85rem', color: '#333' }}>In stock</span>
+                        <button type="button" aria-pressed={!!formData.inStock} onClick={() => setFormData((p:any)=>({...p, inStock: !p.inStock}))} className={`toggle-switch ${formData.inStock ? 'on' : 'off'}`} style={{ border: '1px solid #ccc', borderRadius: 20, width: 46, height: 26, padding: 2, background: formData.inStock ? '#06b6d4' : '#fff' }}>
+                            <span style={{ display: 'block', width: 20, height: 20, borderRadius: '50%', background: '#fff', transform: formData.inStock ? 'translateX(20px)' : 'translateX(0)', transition: 'transform 140ms ease' }} />
+                        </button>
+                    </label>
+                </div>
+            </div>
             <form className="admin-form" onSubmit={handleSubmit}>
                 <div className="form-group"><label>Nama</label><input name="name" value={formData.name} onChange={handleChange} required/></div>
                 <div className="form-group"><label>Galeri Gambar</label>

@@ -208,7 +208,9 @@ export async function fetchBlogPosts(): Promise<SupabaseBlogPost[]> {
 // --- Laptops helpers (fetch, upsert, delete) ---
 export async function fetchLaptops(): Promise<any[]> {
   const supabase = getSupabaseClient();
-  const { data, error } = await supabase.from('laptops').select('*');
+  // By default, fetch only laptops that are in stock for public listing.
+  // Callers can override by directly querying supabase if they need admin/unfiltered results.
+  const { data, error } = await supabase.from('laptops').select('*').eq('in_stock', true);
   if (error) throw error;
   const mapRow = (row: any) => ({
     ...row,
@@ -222,6 +224,7 @@ export async function fetchLaptops(): Promise<any[]> {
     cpu: row.cpu ?? null,
     displayInch: row.display_inch ?? row.displayInch ?? row.displayinch ?? null,
     condition: row.condition ?? null,
+  inStock: row.in_stock ?? row.inStock ?? null,
     grade: row.grade ?? null,
     features: row.features ?? null,
     accessories: row.accessories ?? null,
@@ -276,6 +279,8 @@ export async function upsertLaptop(laptop: any): Promise<any> {
       payload['image_public_id'] = (laptop as any)[k];
     } else if (k === 'galleryPublicIds') {
       payload['gallery_public_ids'] = (laptop as any)[k];
+    } else if (k === 'inStock') {
+      payload['in_stock'] = (laptop as any)[k];
     } else {
       const newKey = k === 'id' ? 'id' : k.toLowerCase();
       payload[newKey] = (laptop as any)[k];
