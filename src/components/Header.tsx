@@ -62,7 +62,8 @@ export const Header: React.FC<HeaderProps> = ({ setPage, appSettings, setAppSett
   const navItems: { page: Page; label: string }[] = [
     { page: 'home', label: 'Home' },
     { page: 'destinations', label: 'Destinasi' },
-    { page: 'blog', label: 'Blog' },
+  { page: 'blog', label: 'Blog' },
+  { page: 'laptops' as Page, label: 'Laptop' },
     // Admin link should only be shown for authenticated users
     ...(isAuthenticated ? [{ page: 'admin' as Page, label: 'Admin' }] : []),
   ];

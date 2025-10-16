@@ -14,6 +14,7 @@ import { DestinationsPage } from './pages/DestinationsPage';
 import { DestinationDetailPage } from './pages/DestinationDetailPage';
 import { BlogPage } from './pages/BlogPage';
 import { BlogDetailPage } from './pages/BlogDetailPage';
+import { LaptopsPage } from './pages/LaptopsPage';
 import { SearchResultsPage } from './pages/SearchResultsPage';
 import { WishlistPage } from './pages/WishlistPage';
 import { ContactPage } from './pages/ContactPage';
@@ -642,6 +643,7 @@ const App = () => {
   {/* Order page removed */}
   <Route path="/blog" element={<BlogPage blogPosts={blogPosts} onViewDetail={handleViewBlogDetail} isLoading={homeIsLoading} brandName={appSettings.brandName} />} />
   <Route path="/blog/:slug" element={<BlogDetailWrapper />} />
+  <Route path="/laptops" element={<LaptopsPage allLaptops={laptops} onViewDetail={(l) => { try { setPage && setPage('destinationDetail'); } catch {} ; try { navigate(`/laptops/${l.slug || l.id}`); } catch {} }} onBuyNow={(l) => { /* placeholder */ }} isLoading={homeIsLoading} />} />
       <Route path="/search" element={<SearchResultsPage query={searchQuery} setPage={setPage} onViewDetail={handleViewDetail} onBookNow={handleBookNow} allDestinations={destinations} />} />
       <Route path="/wishlist" element={<WishlistPage setPage={setPage} onViewDetail={handleViewDetail} onBookNow={handleBookNow} allDestinations={destinations} />} />
       <Route path="/contact" element={<ContactPage />} />
