@@ -42,10 +42,10 @@ const LaptopCardComponent: React.FC<LaptopCardProps> = ({ laptop, onViewDetail, 
         )}
         <h3 id={`laptop-title-${id}`}>{name}</h3>
         <div className="card-specs-badges" aria-hidden>
+          {/* Show only three spec badges: Processor (CPU), RAM, Storage */}
+          {laptop?.cpu && <span className="card-spec-badge">{laptop.cpu}</span>}
           {laptop?.ram && <span className="card-spec-badge">{laptop.ram}</span>}
           {laptop?.storage && <span className="card-spec-badge">{laptop.storage}</span>}
-          {laptop?.cpu && <span className="card-spec-badge">{laptop.cpu}</span>}
-          {laptop?.displayInch && <span className="card-spec-badge">{laptop.displayInch} in</span>}
         </div>
         <div className="card-footer">
           <div>
