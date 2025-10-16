@@ -147,6 +147,45 @@ export const LaptopForm: React.FC<LaptopFormProps> = ({ laptop, onSave, onCancel
         ]
     };
 
+    const formatPrice = (p: any) => {
+        try { const n = Number(p); if (!n) return ''; return new Intl.NumberFormat('id-ID').format(n); } catch { return String(p); }
+    };
+
+    const generateDescription = () => {
+        const name = formData.name || '';
+        const brands = (formData.categories || []).join(', ');
+        const specs: string[] = [];
+        if (formData.ram) specs.push(`RAM: ${formData.ram}`);
+        if (formData.storage) specs.push(`Storage: ${formData.storage}`);
+        if (formData.cpu) specs.push(`CPU: ${formData.cpu}`);
+        if (formData.displayInch) specs.push(`Layar: ${formData.displayInch}\"`);
+        if (formData.condition) specs.push(`Kondisi: ${formData.condition === 'new' ? 'Baru' : 'Bekas'}`);
+        if (formData.grade) specs.push(`Grade: ${formData.grade}`);
+        const priceText = formData.price ? `Harga: Rp ${formatPrice(formData.price)}` : '';
+
+        const features = formData.features || [];
+        const accessories = formData.accessories || [];
+
+        // Build HTML template
+        let html = '';
+        if (name) {
+            html += `<p><strong>${name}</strong>${brands ? ` — ${brands}` : ''}${priceText ? ` • ${priceText}` : ''}</p>`;
+        }
+        if (specs.length > 0) {
+            html += `<p><strong>Spesifikasi Utama:</strong></p><ul>` + specs.map(s => `<li>${s}</li>`).join('') + `</ul>`;
+        }
+        if (features.length > 0) {
+            html += `<p><strong>Kelebihan:</strong></p><ul>` + features.map(f => `<li>${f}</li>`).join('') + `</ul>`;
+        }
+        if (accessories.length > 0) {
+            html += `<p><strong>Kelengkapan:</strong></p><ul>` + accessories.map(a => `<li>${a}</li>`).join('') + `</ul>`;
+        }
+        if (!html) html = `<p>${name || 'Laptop ini'}. Deskripsi singkat belum tersedia.</p>`;
+
+        // Set into editor
+        try { handleDescriptionChange(html); showToast('Deskripsi telah digenerate', 'success'); } catch (e) { handleDescriptionChange(html); }
+    };
+
     const handleSubmit = (e: React.FormEvent) => { e.preventDefault(); setIsSaving(true); setTimeout(async () => {
         const finalImageUrls = [...imageUrls]; const localPublicIds = finalImageUrls.map((_, i) => (publicIds[i] ?? null));
         for (let i = 0; i < finalImageUrls.length; i++) { const file = uploadFiles[i]; if (file) { try { setUploadProgress(prev => { const np = [...prev]; np[i] = 0; return np; }); const res = await uploadToCloudinary(file, (pct: number) => setUploadProgress(prev => { const np = [...prev]; np[i] = pct; return np; })); finalImageUrls[i] = res.url; localPublicIds[i] = res.public_id || null; setUploadFiles(prev => { const nf = [...prev]; nf[i] = null; return nf; }); setUploadProgress(prev => { const np = [...prev]; np[i] = 100; return np; }); } catch (err) { setUploadProgress(prev => { const np = [...prev]; np[i] = -1; return np; }); } } }
@@ -363,7 +402,10 @@ export const LaptopForm: React.FC<LaptopFormProps> = ({ laptop, onSave, onCancel
                 </div>
 
                 <div className="form-group">
-                    <label>Deskripsi</label>
+                    <label style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <span>Deskripsi</span>
+                        <button type="button" className="btn btn-secondary" onClick={generateDescription} style={{ fontSize: '0.85rem' }}>Generate</button>
+                    </label>
                     <ReactQuill className="description-editor" theme="snow" value={formData.description || ''} onChange={handleDescriptionChange} modules={modules} />
                 </div>
 
