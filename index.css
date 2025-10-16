@@ -839,41 +839,21 @@ body.dark .search-bar {
   backdrop-filter: blur(5px);
 }
 
-/* Feature badge overlay for laptop cards (top-left) */
-.feature-badge {
+/* Condition badge for laptop cards (e.g., New, Second) */
+.card-condition-badge {
     position: absolute;
-    left: 8px;
-    top: 8px;
-    background: var(--accent);
-    color: white;
-    padding: 8px 14px;
+    top: 10px;
+    left: 10px;
+    padding: 0.25rem 0.6rem;
     border-radius: 999px;
+    font-size: 0.75rem;
     font-weight: 700;
-    font-size: 0.95rem;
-    line-height: 1;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    color: #fff;
+    z-index: 35;
+    text-transform: capitalize;
 }
-
-/* small decorative tail on the left-bottom of the badge (folded look) */
-.feature-badge::after {
-    content: '';
-    position: absolute;
-    left: -8px;
-    bottom: -8px;
-    width: 18px;
-    height: 18px;
-    background: color-mix(in srgb, var(--accent) 75%, black 5%);
-    border-bottom-left-radius: 8px;
-    transform: rotate(20deg);
-}
-
-@media (max-width: 640px) {
-    .feature-badge { padding: 6px 10px; font-size: 0.85rem; }
-    .feature-badge::after { width: 14px; height: 14px; left: -6px; bottom: -6px; }
-}
+.card-condition-badge--new { background: linear-gradient(90deg, #16a34a, #10b981); }
+.card-condition-badge--second { background: linear-gradient(90deg, #f97316, #fb923c); }
 
 .card-badge svg {
     width: 14px;
