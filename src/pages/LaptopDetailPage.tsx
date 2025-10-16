@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import DOMPurify from 'dompurify';
 import Seo from '../components/Seo';
+import { useWishlist } from '../contexts/WishlistContext';
+import { HeartIcon } from '../components/Icons';
 import { useNavigate } from 'react-router-dom';
 
 interface LaptopDetailPageProps {
@@ -42,6 +44,23 @@ export const LaptopDetailPage: React.FC<LaptopDetailPageProps> = ({ laptop, setP
   }, [imgs.length]);
 
   if (isLoading) return <div className="page-container"><div className="container">Memuat...</div></div>;
+
+  // Small inline component to show wishlist toggle inside sticky bar
+  const WishlistInSticky: React.FC<{ laptop: any }> = ({ laptop }) => {
+    const { isInWishlist, addToWishlist, removeFromWishlist } = useWishlist();
+    const id = laptop?.id;
+    const isWishlisted = isInWishlist(id);
+    const handle = (e: React.MouseEvent) => {
+      e.stopPropagation();
+      if (isWishlisted) removeFromWishlist(id);
+      else addToWishlist(id);
+    };
+    return (
+      <button className={`wishlist-btn sticky-wishlist-btn ${isWishlisted ? 'active' : ''}`} aria-label={isWishlisted ? 'Hapus dari wishlist' : 'Tambah ke wishlist'} onClick={handle}>
+        <HeartIcon filled={isWishlisted} />
+      </button>
+    );
+  };
 
   return (
     <div className="page-container laptop-detail-page">
@@ -197,9 +216,11 @@ export const LaptopDetailPage: React.FC<LaptopDetailPageProps> = ({ laptop, setP
             <span className="booking-price-label">Harga</span>
             <span className="booking-price" style={{ display: 'block', fontSize: '1.125rem', fontWeight: 700 }}>{formattedPrice}</span>
           </div>
-          <div>
-            <button className="btn btn-primary btn-large" onClick={() => { try { onBuyNow && onBuyNow(laptop); } catch {} }}>Beli Sekarang</button>
-          </div>
+              <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+                {/* wishlist button will be shown here */}
+                <WishlistInSticky laptop={laptop} />
+                <button className="btn btn-primary btn-large" onClick={() => { try { onBuyNow && onBuyNow(laptop); } catch {} }}>Beli Sekarang</button>
+              </div>
         </div>
       </div>
     </div>

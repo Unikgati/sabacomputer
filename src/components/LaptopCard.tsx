@@ -40,9 +40,6 @@ const LaptopCardComponent: React.FC<LaptopCardProps> = ({ laptop, onViewDetail, 
     <article className="destination-card laptop-card" aria-labelledby={`laptop-title-${id}`} onClick={() => onViewDetail(laptop)}>
       <div className="card-image-container">
         <img src={galleryImages[0] || imageUrl} alt={name} loading="lazy" decoding="async" />
-        <button className={`wishlist-btn ${isWishlisted ? 'active' : ''}`} onClick={handleWishlistToggle} aria-label={isWishlisted ? `Hapus ${name} dari wishlist` : `Tambah ${name} ke wishlist`}>
-          <HeartIcon filled={isWishlisted} />
-        </button>
       </div>
       <div className="card-content">
         {showCategories && categories.length > 0 && (

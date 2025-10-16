@@ -1670,6 +1670,20 @@ body.dark .specs-card .specs-table th.specs-key {
     margin-left: 4px;
 }
 
+/* Sticky wishlist button in the booking bar */
+.sticky-wishlist-btn {
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    padding: 0.4rem 0.6rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+}
+.sticky-wishlist-btn svg { width: 20px; height: 20px; }
+.sticky-wishlist-btn.active { color: #e53e3e; }
+
 /* ==========================================================================
    8. Blog Card & Grid
    ========================================================================== */
