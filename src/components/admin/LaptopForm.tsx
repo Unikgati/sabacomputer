@@ -92,6 +92,22 @@ export const LaptopForm: React.FC<LaptopFormProps> = ({ laptop, onSave, onCancel
         setFormData((p: any) => ({ ...p, [field]: val }));
     };
 
+    const toggleFeature = (feature: string) => {
+        setFormData((p:any) => {
+            const current = p.features || [];
+            const next = current.includes(feature) ? current.filter((f:string)=>f!==feature) : [...current, feature];
+            return { ...p, features: next };
+        });
+    };
+
+    const toggleAccessory = (accessory: string) => {
+        setFormData((p:any) => {
+            const current = p.accessories || [];
+            const next = current.includes(accessory) ? current.filter((a:string)=>a!==accessory) : [...current, accessory];
+            return { ...p, accessories: next };
+        });
+    };
+
     // no popover: features rendered inline
 
     // Price input: format with dots every 3 digits for display, keep numeric in state
@@ -373,19 +389,22 @@ export const LaptopForm: React.FC<LaptopFormProps> = ({ laptop, onSave, onCancel
 
                 <div className="form-group">
                     <label>Kelebihan (Features)</label>
-                    <div>
-                        <div className="features-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 8 }}>
-                            {AVAILABLE_FEATURES.map(feature => (
-                                <label key={feature} className="checklist-item" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                                    <input type="checkbox" checked={(formData.features || []).includes(feature)} onChange={() => {
-                                        const current = formData.features || [];
-                                        const next = current.includes(feature) ? current.filter((f:string)=>f!==feature) : [...current, feature];
-                                        setFormData((p:any)=>({...p, features: next}));
-                                    }} />
-                                    <span style={{ cursor: 'pointer' }}>{feature}</span>
-                                </label>
-                            ))}
-                        </div>
+                    <div className="chip-group" role="list">
+                        {AVAILABLE_FEATURES.map(feature => {
+                            const active = (formData.features || []).includes(feature);
+                            return (
+                                <button
+                                    key={feature}
+                                    type="button"
+                                    role="listitem"
+                                    aria-pressed={active}
+                                    className={`chip ${active ? 'chip--active' : ''}`}
+                                    onClick={() => toggleFeature(feature)}
+                                >
+                                    {feature}
+                                </button>
+                            );
+                        })}
                     </div>
                     {formData.features && formData.features.length > 0 && (
                         <div className="suggestion-badges" style={{ marginTop: 8 }}>
@@ -396,25 +415,28 @@ export const LaptopForm: React.FC<LaptopFormProps> = ({ laptop, onSave, onCancel
 
                 <div className="form-group">
                     <label>Kelengkapan (Accessories)</label>
-                    <div style={{ display: 'grid', gap: 8 }}>
-                        <div className="features-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 8 }}>
-                            {AVAILABLE_ACCESSORIES.map(acc => (
-                                <label key={acc} className="checklist-item" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                                    <input type="checkbox" checked={(formData.accessories || []).includes(acc)} onChange={() => {
-                                        const current = formData.accessories || [];
-                                        const next = current.includes(acc) ? current.filter((a:string)=>a!==acc) : [...current, acc];
-                                        setFormData((p:any)=>({...p, accessories: next}));
-                                    }} />
-                                    <span style={{ cursor: 'pointer' }}>{acc}</span>
-                                </label>
-                            ))}
-                        </div>
-                        {formData.accessories && formData.accessories.length > 0 && (
-                            <div className="suggestion-badges" style={{ marginTop: 8 }}>
-                                {formData.accessories.map((a:string)=> (<span key={a} className="facility-badge">{a}</span>))}
-                            </div>
-                        )}
+                    <div className="chip-group" role="list">
+                        {AVAILABLE_ACCESSORIES.map(acc => {
+                            const active = (formData.accessories || []).includes(acc);
+                            return (
+                                <button
+                                    key={acc}
+                                    type="button"
+                                    role="listitem"
+                                    aria-pressed={active}
+                                    className={`chip ${active ? 'chip--active' : ''}`}
+                                    onClick={() => toggleAccessory(acc)}
+                                >
+                                    {acc}
+                                </button>
+                            );
+                        })}
                     </div>
+                    {formData.accessories && formData.accessories.length > 0 && (
+                        <div className="suggestion-badges" style={{ marginTop: 8 }}>
+                            {formData.accessories.map((a:string)=> (<span key={a} className="facility-badge">{a}</span>))}
+                        </div>
+                    )}
                 </div>
 
                 <div className="form-group">
