@@ -206,11 +206,13 @@ export async function fetchBlogPosts(): Promise<SupabaseBlogPost[]> {
 }
 
 // --- Laptops helpers (fetch, upsert, delete) ---
-export async function fetchLaptops(): Promise<any[]> {
+export async function fetchLaptops(opts?: { includeOutOfStock?: boolean }): Promise<any[]> {
   const supabase = getSupabaseClient();
   // By default, fetch only laptops that are in stock for public listing.
-  // Callers can override by directly querying supabase if they need admin/unfiltered results.
-  const { data, error } = await supabase.from('laptops').select('*').eq('in_stock', true);
+  // If opts.includeOutOfStock is true, return all laptops (used by admin pages).
+  const query = supabase.from('laptops').select('*');
+  const finalQuery = opts && opts.includeOutOfStock ? query : query.eq('in_stock', true);
+  const { data, error } = await finalQuery;
   if (error) throw error;
   const mapRow = (row: any) => ({
     ...row,

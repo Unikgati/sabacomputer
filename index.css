@@ -2681,6 +2681,68 @@ body.dark .discount-badge {
     font-size: 1.8rem;
 }
 
+/* Toggle switch used in admin LaptopForm (theme-aware) */
+.toggle-switch {
+    width: 46px;
+    height: 26px;
+    padding: 2px;
+    border-radius: 999px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-secondary);
+    display: inline-flex;
+    align-items: center;
+    position: relative;
+}
+.toggle-switch .toggle-thumb {
+    display: block;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--bg-primary);
+    transition: transform 140ms ease, background 140ms ease;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+}
+.toggle-switch.on {
+    background: color-mix(in srgb, var(--accent) 14%, var(--bg-secondary));
+    border-color: color-mix(in srgb, var(--accent) 36%, var(--border-color));
+}
+.toggle-switch.on .toggle-thumb {
+    transform: translateX(20px);
+    background: #fff;
+}
+body.dark .toggle-switch {
+    background: color-mix(in srgb, var(--bg-secondary) 85%, #111 15%);
+    border-color: var(--border-dark);
+}
+body.dark .toggle-switch.on {
+    background: color-mix(in srgb, var(--accent) 60%, #111 40%);
+}
+
+/* Admin list badges */
+.admin-item-card { position: relative; }
+.admin-item-badge {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    padding: 4px 8px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    z-index: 5;
+    display: inline-flex;
+    align-items: center;
+}
+.admin-item-badge.out-of-stock {
+    background: color-mix(in srgb, #fff 86%, var(--accent) 14%);
+    color: var(--accent);
+    border: 1px solid color-mix(in srgb, var(--accent) 36%, var(--border-color));
+}
+body.dark .admin-item-badge.out-of-stock {
+    background: color-mix(in srgb, #111 86%, var(--accent) 14%);
+    color: color-mix(in srgb, var(--accent) 72%, #fff 28%);
+    border-color: color-mix(in srgb, var(--accent) 36%, #222 64%);
+}
+
 .admin-form .form-group {
     margin-bottom: 1.5rem;
 }

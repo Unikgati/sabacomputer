@@ -255,10 +255,10 @@ export const LaptopForm: React.FC<LaptopFormProps> = ({ laptop, onSave, onCancel
             <div className="admin-form-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <h2 style={{ margin: 0 }}>{formData.id === 0 ? 'Tambah' : 'Edit'} Laptop</h2>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: '0.95rem' }}>
-                        <span style={{ fontSize: '0.85rem', color: '#333' }}>In stock</span>
-                        <button type="button" aria-pressed={!!formData.inStock} onClick={() => setFormData((p:any)=>({...p, inStock: !p.inStock}))} className={`toggle-switch ${formData.inStock ? 'on' : 'off'}`} style={{ border: '1px solid #ccc', borderRadius: 20, width: 46, height: 26, padding: 2, background: formData.inStock ? '#06b6d4' : '#fff' }}>
-                            <span style={{ display: 'block', width: 20, height: 20, borderRadius: '50%', background: '#fff', transform: formData.inStock ? 'translateX(20px)' : 'translateX(0)', transition: 'transform 140ms ease' }} />
+                    <label className="form-toggle" style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: '0.95rem' }}>
+                        <span className="form-toggle-label">In stock</span>
+                        <button type="button" aria-pressed={!!formData.inStock} onClick={() => setFormData((p:any)=>({...p, inStock: !p.inStock}))} className={`toggle-switch ${formData.inStock ? 'on' : 'off'}`}>
+                            <span className="toggle-thumb" aria-hidden />
                         </button>
                     </label>
                 </div>
