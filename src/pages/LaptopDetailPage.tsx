@@ -49,7 +49,6 @@ export const LaptopDetailPage: React.FC<LaptopDetailPageProps> = ({ laptop, setP
                   </button>
                 ))}
               </div>
-              <div className="blog-detail-content" style={{ marginTop: '1rem' }} dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(laptop.description || '') }} />
             </section>
           </div>
           <aside className="right-column">
@@ -88,6 +87,9 @@ export const LaptopDetailPage: React.FC<LaptopDetailPageProps> = ({ laptop, setP
             </div>
           </aside>
         </div>
+
+  {/* Description: place after grid so it spans full width */}
+  <div className="blog-detail-content" style={{ marginTop: '1.5rem' }} dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(laptop.description || '') }} />
       </div>
 
       {/* Sticky buy bar (similar to destination) */}

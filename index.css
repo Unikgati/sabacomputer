@@ -1578,7 +1578,7 @@ body.dark .specs-card .specs-table th.specs-key {
 @media (min-width: 880px) {
     .laptop-detail-grid {
         /* smaller fixed gallery column on the left, flexible specs on the right */
-        grid-template-columns: 320px 1fr;
+        grid-template-columns: 320px minmax(360px, 1fr);
         align-items: start;
     }
     .laptop-detail-grid .left-column { order: 1; }
@@ -1596,6 +1596,11 @@ body.dark .specs-card .specs-table th.specs-key {
     /* ensure right column content stretches and doesn't appear cramped */
     .right-column { display: flex; flex-direction: column; }
     .right-column .specs-card { width: 100%; }
+}
+
+/* Make sure the blog/detail description spans full container width and doesn't get squashed */
+.blog-detail-content {
+    max-width: 100%;
 }
 
 .booking-bar-content {
