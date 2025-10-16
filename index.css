@@ -925,6 +925,22 @@ body.dark .wishlist-btn:hover {
     margin-bottom: 0.75rem;
 }
 
+.card-specs-badges {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.75rem;
+}
+.card-spec-badge {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    padding: 0.25rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border: 1px solid var(--border-color);
+}
+
 .card-category-badge {
     background-color: var(--accent-hover);
     color: white;

@@ -41,7 +41,12 @@ const LaptopCardComponent: React.FC<LaptopCardProps> = ({ laptop, onViewDetail, 
           <div className="card-category-list">{categories.slice(0,2).map((c:string) => <span key={c} className="card-category-badge">{c}</span>)}</div>
         )}
         <h3 id={`laptop-title-${id}`}>{name}</h3>
-        <p className="card-description">{snippet}</p>
+        <div className="card-specs-badges" aria-hidden>
+          {laptop?.ram && <span className="card-spec-badge">{laptop.ram}</span>}
+          {laptop?.storage && <span className="card-spec-badge">{laptop.storage}</span>}
+          {laptop?.cpu && <span className="card-spec-badge">{laptop.cpu}</span>}
+          {laptop?.displayInch && <span className="card-spec-badge">{laptop.displayInch} in</span>}
+        </div>
         <div className="card-footer">
           <div>
             <span className="price-label">Harga</span>
