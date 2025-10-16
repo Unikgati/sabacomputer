@@ -1465,8 +1465,8 @@ body.dark .wishlist-btn:hover {
     padding: 0.85rem 1rem;
     width: 40%;
     font-weight: 600;
-    /* make header follow primary text so it remains legible in both themes */
-    color: var(--text-primary);
+    /* use secondary text by default for a soft key label in light mode */
+    color: var(--text-secondary);
     background: transparent;
 }
 .specs-card .specs-table td.specs-val {
@@ -1502,6 +1502,25 @@ body.dark .specs-card .specs-table tr.specs-row:nth-child(even) {
 .specs-card .specs-table tr.specs-row:last-child th.specs-key,
 .specs-card .specs-table tr.specs-row:last-child td.specs-val {
     border-bottom: none;
+}
+
+/* Header area inside specs-card so we can avoid inline light-only backgrounds */
+.specs-card .specs-card-header {
+    padding: 1rem;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
+}
+.specs-card .specs-card-header h3 {
+    margin: 0;
+    font-size: 1rem;
+}
+
+/* subtle shadow utility for cards when desired */
+.specs-card--shadow { box-shadow: 0 6px 18px rgba(0,0,0,0.06); }
+
+/* Ensure th keys are high-contrast in dark mode */
+body.dark .specs-card .specs-table th.specs-key {
+    color: var(--text-primary);
 }
 
 .booking-bar-content {

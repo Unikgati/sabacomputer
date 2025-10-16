@@ -53,11 +53,11 @@ export const LaptopDetailPage: React.FC<LaptopDetailPageProps> = ({ laptop, setP
             <section className="laptop-unified-content">
               <div className="blog-detail-content" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(laptop.description || '') }} />
 
-              <div className="specs-card" style={{ marginTop: '1.25rem', borderRadius: 12, overflow: 'hidden', boxShadow: '0 6px 18px rgba(0,0,0,0.06)' }}>
-                <div style={{ padding: '1rem 1rem', background: 'linear-gradient(180deg, #fff, #fafafa)' }}>
-                  <h3 style={{ margin: 0 }}>Spesifikasi</h3>
+              <div className="specs-card specs-card--shadow" style={{ marginTop: '1.25rem' }}>
+                <div className="specs-card-header">
+                  <h3>Spesifikasi</h3>
                 </div>
-                <table className="specs-table" style={{ width: '100%', borderCollapse: 'separate', borderSpacing: 0 }}>
+                <table className="specs-table">
                   <tbody>
                     {[
                       ['RAM', laptop.ram || '-'],
