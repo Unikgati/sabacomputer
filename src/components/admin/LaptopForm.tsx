@@ -23,7 +23,9 @@ export const LaptopForm: React.FC<LaptopFormProps> = ({ laptop, onSave, onCancel
         cpu: laptop.cpu || '',
         displayInch: laptop.displayInch === undefined || laptop.displayInch === null ? '' : laptop.displayInch,
         condition: laptop.condition || 'second',
-        features: laptop.features || []
+        grade: laptop.grade || '',
+        features: laptop.features || [],
+        accessories: laptop.accessories || []
     };
     const [formData, setFormData] = useState<any>(initial);
     const [imageUrls, setImageUrls] = useState<string[]>((laptop.galleryImages && laptop.galleryImages.length > 0) ? laptop.galleryImages : (laptop.imageUrl ? [laptop.imageUrl] : []));
@@ -35,6 +37,7 @@ export const LaptopForm: React.FC<LaptopFormProps> = ({ laptop, onSave, onCancel
     const [customInclusion, setCustomInclusion] = useState('');
     const [isSaving, setIsSaving] = useState(false);
     const AVAILABLE_FEATURES = ['Touchscreen','360° Hinge','Backlit Keyboard','Fingerprint Reader','Dedicated GPU','Thunderbolt','Lightweight','Long Battery','Numeric Keypad','IPS Display'];
+    const AVAILABLE_ACCESSORIES = ['Charger','Tas','Mouse','Flashdisk','Adaptor','Kabel','Manual','Box'];
     const [specSuggestions, setSpecSuggestions] = useState<Record<string, string[]>>({ ram: [], storage: [], cpu: [], displayInch: [], brand: [] });
 
     const handleChange = (e: any) => {
@@ -56,6 +59,13 @@ export const LaptopForm: React.FC<LaptopFormProps> = ({ laptop, onSave, onCancel
             // ignore
         }
     }, []);
+
+    // Clear grade when condition becomes new (grade only relevant for 'second')
+    useEffect(() => {
+        if (formData.condition === 'new' && formData.grade) {
+            setFormData((p:any) => ({ ...p, grade: '' }));
+        }
+    }, [formData.condition]);
 
     const extractSnippet = (text: string) => {
         if (!text) return '';
@@ -158,7 +168,9 @@ export const LaptopForm: React.FC<LaptopFormProps> = ({ laptop, onSave, onCancel
             storage: formData.storage || '',
             cpu: formData.cpu || '',
             displayInch: formData.displayInch === '' ? 0 : Number(formData.displayInch) || 0,
-            condition: formData.condition || 'second'
+            condition: formData.condition || 'second',
+            grade: formData.grade || '',
+            accessories: formData.accessories || []
         };
         try { await onSave(finalData); } catch (err:any) { const msg = (err && err.message) ? err.message : 'Gagal menyimpan laptop'; try { showToast(msg, 'error'); } catch {} }
     setIsSaving(false); }, 1200); };
@@ -218,12 +230,24 @@ export const LaptopForm: React.FC<LaptopFormProps> = ({ laptop, onSave, onCancel
                             </div>
                         )}
                     </div>
-                    <div className="form-group">
-                        <label>Kondisi</label>
-                        <select name="condition" value={formData.condition} onChange={handleChange}>
-                            <option value="second">Second</option>
-                            <option value="new">New</option>
-                        </select>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+                        <div className="form-group">
+                            <label>Kondisi</label>
+                            <select name="condition" value={formData.condition} onChange={handleChange}>
+                                <option value="second">Second</option>
+                                <option value="new">New</option>
+                            </select>
+                        </div>
+                        <div className="form-group">
+                            <label>Grade</label>
+                            <select name="grade" value={formData.grade} onChange={handleChange} disabled={formData.condition === 'new'}>
+                                <option value="">Pilih grade</option>
+                                <option value="A">A</option>
+                                <option value="B">B</option>
+                                <option value="C">C</option>
+                                <option value="D">D</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
 
@@ -313,6 +337,29 @@ export const LaptopForm: React.FC<LaptopFormProps> = ({ laptop, onSave, onCancel
                             {formData.features.map((f:string) => (<span key={f} className="facility-badge">{f}</span>))}
                         </div>
                     )}
+                </div>
+
+                <div className="form-group">
+                    <label>Kelengkapan (Accessories)</label>
+                    <div style={{ display: 'grid', gap: 8 }}>
+                        <div className="features-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 8 }}>
+                            {AVAILABLE_ACCESSORIES.map(acc => (
+                                <label key={acc} className="checklist-item" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                                    <input type="checkbox" checked={(formData.accessories || []).includes(acc)} onChange={() => {
+                                        const current = formData.accessories || [];
+                                        const next = current.includes(acc) ? current.filter((a:string)=>a!==acc) : [...current, acc];
+                                        setFormData((p:any)=>({...p, accessories: next}));
+                                    }} />
+                                    <span style={{ cursor: 'pointer' }}>{acc}</span>
+                                </label>
+                            ))}
+                        </div>
+                        {formData.accessories && formData.accessories.length > 0 && (
+                            <div className="suggestion-badges" style={{ marginTop: 8 }}>
+                                {formData.accessories.map((a:string)=> (<span key={a} className="facility-badge">{a}</span>))}
+                            </div>
+                        )}
+                    </div>
                 </div>
 
                 <div className="form-group">
