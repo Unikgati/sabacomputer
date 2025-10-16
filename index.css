@@ -1577,13 +1577,25 @@ body.dark .specs-card .specs-table th.specs-key {
 
 @media (min-width: 880px) {
     .laptop-detail-grid {
-        grid-template-columns: 1fr 360px; /* left gallery + right specs */
+        /* smaller fixed gallery column on the left, flexible specs on the right */
+        grid-template-columns: 320px 1fr;
         align-items: start;
     }
     .laptop-detail-grid .left-column { order: 1; }
     .laptop-detail-grid .right-column { order: 2; }
     .right-column { position: relative; }
     .right-column .specs-card { position: sticky; top: 120px; }
+}
+
+/* Desktop tweaks: smaller thumbnails and constrain main image to the left column width */
+@media (min-width: 880px) {
+    .main-image.square { max-width: 320px; margin: 0; }
+    .left-column .thumbnail-grid { display: flex; gap: 0.5rem; margin-top: 0.75rem; }
+    .left-column .thumbnail { width: 64px; height: 64px; aspect-ratio: 1/1; border-radius: 8px; overflow: hidden; }
+    .left-column .thumbnail img { width: 100%; height: 100%; object-fit: cover; }
+    /* ensure right column content stretches and doesn't appear cramped */
+    .right-column { display: flex; flex-direction: column; }
+    .right-column .specs-card { width: 100%; }
 }
 
 .booking-bar-content {
