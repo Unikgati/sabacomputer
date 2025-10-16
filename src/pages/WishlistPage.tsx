@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Destination, Page } from '../types';
 import { useWishlist } from '../contexts/WishlistContext';
 import { DestinationCard } from '../components/DestinationCard';
+import { LaptopCard } from '../components/LaptopCard';
 import { ArrowLeftIcon } from '../components/Icons';
 
 interface WishlistPageProps {
@@ -14,25 +15,26 @@ interface WishlistPageProps {
 
 export const WishlistPage: React.FC<WishlistPageProps> = ({ setPage, onViewDetail, onBookNow, allDestinations }) => {
     const { wishlist } = useWishlist();
-    const wishlistedDestinations = allDestinations.filter(dest => wishlist.includes(dest.id));
+    // assume wishlist now stores laptop ids; attempt to map against laptops first
+    const wishlistedItems = allDestinations.filter(item => wishlist.includes(item.id));
     const navigate = useNavigate();
 
     return (
         <div className="page-container">
             <div className="container">
                 <div className="page-header">
-                    <h1>Destinasi Impian Saya</h1>
-                    <p>Berikut adalah daftar destinasi yang telah Anda simpan.</p>
+                    <h1>Wishlist Saya</h1>
+                    <p>Produk yang Anda simpan akan muncul di sini.</p>
                 </div>
-                {wishlistedDestinations.length > 0 ? (
+                {wishlistedItems.length > 0 ? (
                     <div className="destinations-grid homepage-grid wishlist-grid">
-                        {wishlistedDestinations.map(dest => <DestinationCard key={dest.id} destination={dest} onViewDetail={onViewDetail} onBookNow={onBookNow} showCategories={false} />)}
+                        {wishlistedItems.map(item => <LaptopCard key={item.id} laptop={item} onViewDetail={onViewDetail} onBuyNow={onBookNow} showCategories={false} />)}
                     </div>
                 ) : (
                     <div className="wishlist-empty-state">
                         <h2>Wishlist Anda kosong</h2>
-                        <p>Mulai jelajahi dan tambahkan destinasi impian Anda ke sini!</p>
-                        <button className="btn btn-primary" onClick={() => { navigate('/destinations'); try { setPage && setPage('destinations'); } catch {} }}>Jelajahi Destinasi</button>
+                        <p>Mulai jelajahi produk dan tambahkan yang Anda suka ke sini!</p>
+                        <button className="btn btn-primary" onClick={() => { navigate('/laptops'); try { setPage && (setPage as any)('laptops'); } catch {} }}>Jelajahi Produk</button>
                     </div>
                 )}
             </div>
