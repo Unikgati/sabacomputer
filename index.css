@@ -1531,7 +1531,7 @@ body.dark .wishlist-btn:hover {
     display: flex;
     gap: 0.5rem 0.75rem;
     flex-wrap: wrap;
-    margin-top: 0.5rem;
+    margin-top: 0.25rem;
 }
 .accessory-badge {
     display: inline-flex;
@@ -1550,17 +1550,25 @@ body.dark .accessory-badge {
 }
 
 /* Features (Kelebihan) badges: match visual style and spacing to accessories */
+.accessories-section {
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+    background: transparent; /* keep same bg, but allow subtle border if desired */
+    margin-bottom: 0.25rem;
+}
+/* Features (Kelebihan) badges: match visual style and spacing to accessories */
 .features-section {
-    padding: 0.75rem 1rem;
+    padding: 0.5rem 0.75rem;
     border-radius: 8px;
     background: transparent;
+    margin-top: 0.25rem;
 }
-.features-section h3 { margin: 0; font-size: 1rem; }
+.features-section h3 { margin: 0 0 0.25rem 0; font-size: 1rem; }
 .features-badges {
     display: flex;
     gap: 0.5rem 0.75rem;
     flex-wrap: wrap;
-    margin-top: 0.5rem;
+    margin-top: 0.25rem;
 }
 .feature-badge {
     display: inline-flex;
