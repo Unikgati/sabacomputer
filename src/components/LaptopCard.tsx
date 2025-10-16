@@ -26,6 +26,17 @@ const LaptopCardComponent: React.FC<LaptopCardProps> = ({ laptop, onViewDetail, 
     return txt.slice(0, 180);
   };
 
+  // Limit CPU badge to max 13 characters, prefer cutting at last space to avoid mid-word truncation
+  const formatCpu = (cpu: string) => {
+    if (!cpu) return '';
+    const trimmed = cpu.trim();
+    if (trimmed.length <= 13) return trimmed;
+    const slice = trimmed.slice(0, 13);
+    const lastSpace = slice.lastIndexOf(' ');
+    if (lastSpace > 0) return slice.slice(0, lastSpace);
+    return slice;
+  };
+
   const snippet = createSnippet(laptop?.description || laptop?.longDescription || '');
 
   return (
@@ -43,7 +54,7 @@ const LaptopCardComponent: React.FC<LaptopCardProps> = ({ laptop, onViewDetail, 
         <h3 id={`laptop-title-${id}`}>{name}</h3>
         <div className="card-specs-badges" aria-hidden>
           {/* Show only three spec badges: Processor (CPU), RAM, Storage */}
-          {laptop?.cpu && <span className="card-spec-badge">{laptop.cpu}</span>}
+          {laptop?.cpu && <span className="card-spec-badge">{formatCpu(String(laptop.cpu))}</span>}
           {laptop?.ram && <span className="card-spec-badge">{laptop.ram}</span>}
           {laptop?.storage && <span className="card-spec-badge">{laptop.storage}</span>}
         </div>
