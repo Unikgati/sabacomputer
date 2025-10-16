@@ -32,6 +32,11 @@ const LaptopCardComponent: React.FC<LaptopCardProps> = ({ laptop, onViewDetail, 
     <article className="destination-card laptop-card" aria-labelledby={`laptop-title-${id}`} onClick={() => onViewDetail(laptop)}>
       <div className="card-image-container">
         <img src={galleryImages[0] || imageUrl} alt={name} loading="lazy" decoding="async" />
+        {(laptop?.features && Array.isArray(laptop.features) && laptop.features.length > 0) && (
+          <div className="feature-badge" title={String(laptop.features[0])}>
+            {String(laptop.features[0])}
+          </div>
+        )}
       </div>
       <div className="card-content">
         {showCategories && categories.length > 0 && (
