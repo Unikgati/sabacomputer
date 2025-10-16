@@ -1556,7 +1556,7 @@ body.dark .specs-card .specs-table th.specs-key {
 .laptop-detail-grid .right-column { order: 2; }
 
 /* Make main image square and keep thumbnails below */
-.main-image.square { width: 100%; padding-top: 70%; position: relative; overflow: hidden; border-radius: 12px; max-height: 560px; }
+.main-image.square { width: 100%; padding-top: 100%; position: relative; overflow: hidden; border-radius: 12px; max-width: 720px; margin: 0 auto; }
 .main-image.square .main-image-track { position: absolute; inset: 0; }
 .main-image.square .main-image-slide { height: 100%; }
 
@@ -1572,13 +1572,17 @@ body.dark .specs-card .specs-table th.specs-key {
 }
 
 /* Thumbnails inside laptop detail should be square */
-.laptop-detail-grid .thumbnail-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem; }
-.laptop-detail-grid .thumbnail { aspect-ratio: 1 / 1; border-radius: 8px; overflow: hidden; border: 2px solid transparent; transition: border-color .2s ease; }
+.laptop-detail-grid .thumbnail-grid { display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center; }
+.laptop-detail-grid .thumbnail { aspect-ratio: 1 / 1; border-radius: 8px; overflow: hidden; border: 2px solid transparent; transition: border-color .2s ease; flex: 0 0 72px; width: 72px; height: 72px; }
 .laptop-detail-grid .thumbnail img { width: 100%; height: 100%; object-fit: cover; }
 .laptop-detail-grid .thumbnail:hover, .laptop-detail-grid .thumbnail.active { border-color: var(--accent); }
 
+@media (min-width: 880px) {
+    .laptop-detail-grid .thumbnail { flex: 0 0 84px; width: 84px; height: 84px; }
+}
+
 @media (max-width: 640px) {
-    .laptop-detail-grid .thumbnail-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .laptop-detail-grid .thumbnail { flex: 0 0 64px; width: 64px; height: 64px; }
 }
 
 .booking-bar-content {
