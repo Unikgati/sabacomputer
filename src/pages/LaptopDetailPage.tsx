@@ -79,9 +79,11 @@ export const LaptopDetailPage: React.FC<LaptopDetailPageProps> = ({ laptop, setP
               {(laptop.accessories && laptop.accessories.length > 0) && (
                 <section className="accessories-section" style={{ marginTop: '1rem' }}>
                   <h3>Kelengkapan</h3>
-                  <ul>
-                    {(laptop.accessories || []).map((a:string, i:number) => (<li key={i}>{a}</li>))}
-                  </ul>
+                  <div className="accessories-badges" aria-label="Kelengkapan">
+                    {(laptop.accessories || []).map((a:string, i:number) => (
+                      <span key={i} className="accessory-badge" title={a}>{a}</span>
+                    ))}
+                  </div>
                 </section>
               )}
             </section>
