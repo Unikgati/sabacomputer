@@ -20,6 +20,19 @@ export const LaptopDetailPage: React.FC<LaptopDetailPageProps> = ({ laptop, setP
 
   useEffect(() => { window.scrollTo(0,0); try { document.title = laptop.name || 'Laptop'; } catch (e) {} }, [laptop.name]);
 
+  // keyboard navigation for left/right arrows
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft') {
+        setCurrentIndex(i => (imgs.length ? (i - 1 + imgs.length) % imgs.length : 0));
+      } else if (e.key === 'ArrowRight') {
+        setCurrentIndex(i => (imgs.length ? (i + 1) % imgs.length : 0));
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [imgs.length]);
+
   if (isLoading) return <div className="page-container"><div className="container">Memuat...</div></div>;
 
   return (
@@ -36,6 +49,26 @@ export const LaptopDetailPage: React.FC<LaptopDetailPageProps> = ({ laptop, setP
           <div className="left-column">
             <section className="gallery-container">
               <div className="main-image square" ref={(el) => (mainImageContainerRef.current = el)}>
+                {imgs.length > 1 && (
+                  <>
+                    <button
+                      type="button"
+                      className="image-nav image-nav-left"
+                      onClick={() => setCurrentIndex(i => (imgs.length ? (i - 1 + imgs.length) % imgs.length : 0))}
+                      aria-label="Gambar sebelumnya"
+                    >
+                      ‹
+                    </button>
+                    <button
+                      type="button"
+                      className="image-nav image-nav-right"
+                      onClick={() => setCurrentIndex(i => (imgs.length ? (i + 1) % imgs.length : 0))}
+                      aria-label="Gambar berikutnya"
+                    >
+                      ›
+                    </button>
+                  </>
+                )}
                 <div className="main-image-track" style={{ transform: `translateX(${-currentIndex * 100}%)` }}>
                   {imgs.map((src:string, idx:number) => (
                     <div key={idx} className={`main-image-slide ${idx === currentIndex ? 'active' : ''}`} style={{ backgroundImage: `url(${src})` }} />
@@ -87,6 +120,9 @@ export const LaptopDetailPage: React.FC<LaptopDetailPageProps> = ({ laptop, setP
             </div>
           </aside>
         </div>
+
+        {/* keyboard navigation: left/right arrows to change images */}
+        <script>{/* placeholder to keep JSX prettier; real handler is attached via useEffect below */}</script>
 
   {/* Description: place after grid so it spans full width */}
   <div className="blog-detail-content" style={{ marginTop: '1.5rem' }} dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(laptop.description || '') }} />

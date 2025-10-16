@@ -991,6 +991,50 @@ body.dark .wishlist-btn:hover {
     animation: fadeIn 0.4s ease-in-out;
 }
 
+/* Image nav buttons (prev/next) placed over the main image */
+.image-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0,0,0,0.45);
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    line-height: 1;
+    z-index: 30;
+    border: none;
+    opacity: 0; /* hidden by default */
+    pointer-events: none;
+    transition: opacity 160ms ease, background 120ms ease;
+}
+.image-nav:hover { background: rgba(0,0,0,0.6); }
+.image-nav:focus { outline: 2px solid rgba(255,255,255,0.8); }
+.image-nav-left { left: 8px; }
+.image-nav-right { right: 8px; }
+
+/* reveal on hover or when the main image has focus (keyboard) */
+.main-image:hover .image-nav,
+.main-image:focus-within .image-nav {
+    opacity: 0.9;
+    pointer-events: auto;
+}
+
+/* touch devices (no hover) — keep controls visible for accessibility */
+@media (hover: none) {
+    .image-nav { opacity: 0.9; pointer-events: auto; }
+}
+
+@media (max-width: 720px) {
+    .image-nav { width: 36px; height: 36px; font-size: 20px; }
+    .image-nav-left { left: 6px; }
+    .image-nav-right { right: 6px; }
+}
+
 /* Make main-image respond well to touch gestures: allow vertical scrolling but let
    JS detect horizontal swipes. Also ensure background stays centered and doesn't cause layout shift. */
 .main-image {
