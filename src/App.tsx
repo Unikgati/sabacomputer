@@ -15,6 +15,7 @@ import { DestinationDetailPage } from './pages/DestinationDetailPage';
 import { BlogPage } from './pages/BlogPage';
 import { BlogDetailPage } from './pages/BlogDetailPage';
 import { LaptopsPage } from './pages/LaptopsPage';
+import { LaptopDetailPage } from './pages/LaptopDetailPage';
 import { SearchResultsPage } from './pages/SearchResultsPage';
 import { WishlistPage } from './pages/WishlistPage';
 import { ContactPage } from './pages/ContactPage';
@@ -634,6 +635,25 @@ const App = () => {
     return post ? <BlogDetailPage post={post} setPage={setPage} /> : <div className="page-container container"><h1>Artikel tidak ditemukan</h1></div>;
   };
 
+  const LaptopDetailWrapper: React.FC = () => {
+    const params = useParams();
+    const slug = params.slug || '';
+    const id = Number(slug.split('-')[0]);
+    const laptop = laptops.find((l: any) => l.id === id || l.slug === slug) || null;
+    useEffect(() => { if (laptop) try { setPage && setPage('destinationDetail'); } catch {} }, [laptop]);
+    if (laptop) return <LaptopDetailPage laptop={laptop} setPage={setPage} onBuyNow={(l:any) => { /* placeholder */ }} />;
+    return (
+      <div className="page-container">
+        <div className="container">
+          <div className="page-header">
+            <h1>Laptop tidak ditemukan</h1>
+            <p>Maaf, kami tidak menemukan laptop dengan alamat yang Anda buka.</p>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   // New routing using react-router while keeping legacy `setPage` for compatibility
   const renderRoutes = () => (
     <Routes>
@@ -643,6 +663,7 @@ const App = () => {
   {/* Order page removed */}
   <Route path="/blog" element={<BlogPage blogPosts={blogPosts} onViewDetail={handleViewBlogDetail} isLoading={homeIsLoading} brandName={appSettings.brandName} />} />
   <Route path="/blog/:slug" element={<BlogDetailWrapper />} />
+  <Route path="/laptops/:slug" element={<LaptopDetailWrapper />} />
   <Route path="/laptops" element={<LaptopsPage allLaptops={laptops} onViewDetail={(l) => { try { setPage && setPage('destinationDetail'); } catch {} ; try { navigate(`/laptops/${l.slug || l.id}`); } catch {} }} onBuyNow={(l) => { /* placeholder */ }} isLoading={homeIsLoading} />} />
       <Route path="/search" element={<SearchResultsPage query={searchQuery} setPage={setPage} onViewDetail={handleViewDetail} onBookNow={handleBookNow} allDestinations={destinations} />} />
       <Route path="/wishlist" element={<WishlistPage setPage={setPage} onViewDetail={handleViewDetail} onBookNow={handleBookNow} allDestinations={destinations} />} />
