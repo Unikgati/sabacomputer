@@ -216,6 +216,15 @@ export async function fetchLaptops(): Promise<any[]> {
     galleryImages: row.galleryimages ?? row.galleryImages ?? row.gallery_images ?? null,
     imagePublicId: row.image_public_id ?? row.imagepublicid ?? null,
     galleryPublicIds: row.gallery_public_ids ?? row.gallerypublicids ?? row.gallery_publicids ?? null,
+    // Specs and metadata mapping (snake_case -> camelCase)
+    ram: row.ram ?? null,
+    storage: row.storage ?? null,
+    cpu: row.cpu ?? null,
+    displayInch: row.display_inch ?? row.displayInch ?? row.displayinch ?? null,
+    condition: row.condition ?? null,
+    grade: row.grade ?? null,
+    features: row.features ?? null,
+    accessories: row.accessories ?? null,
     created_at: row.created_at ?? row.createdAt ?? null,
   });
   return (data || []).map(mapRow);
@@ -297,6 +306,15 @@ export async function upsertLaptop(laptop: any): Promise<any> {
     galleryImages: row.galleryimages ?? row.galleryImages ?? row.gallery_images ?? null,
     imagePublicId: row.image_public_id ?? row.imagepublicid ?? null,
     galleryPublicIds: row.gallery_public_ids ?? row.gallerypublicids ?? row.gallery_publicids ?? null,
+    // map spec fields back to camelCase
+    ram: row.ram ?? null,
+    storage: row.storage ?? null,
+    cpu: row.cpu ?? null,
+    displayInch: row.display_inch ?? row.displayInch ?? row.displayinch ?? null,
+    condition: row.condition ?? null,
+    grade: row.grade ?? null,
+    features: row.features ?? null,
+    accessories: row.accessories ?? null,
     created_at: row.created_at ?? row.createdAt ?? null,
   };
 }
