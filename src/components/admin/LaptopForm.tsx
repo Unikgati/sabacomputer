@@ -126,6 +126,17 @@ export const LaptopForm: React.FC<LaptopFormProps> = ({ laptop, onSave, onCancel
         setFormData((p: any) => ({ ...p, description: value }));
     };
 
+    const modules = {
+        toolbar: [
+            [{ 'header': [1, 2, 3, false] }],
+            ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+            [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+            [{ 'align': [] }],
+            ['link'],
+            ['clean']
+        ]
+    };
+
     const handleSubmit = (e: React.FormEvent) => { e.preventDefault(); setIsSaving(true); setTimeout(async () => {
         const finalImageUrls = [...imageUrls]; const localPublicIds = finalImageUrls.map((_, i) => (publicIds[i] ?? null));
         for (let i = 0; i < finalImageUrls.length; i++) { const file = uploadFiles[i]; if (file) { try { setUploadProgress(prev => { const np = [...prev]; np[i] = 0; return np; }); const res = await uploadToCloudinary(file, (pct: number) => setUploadProgress(prev => { const np = [...prev]; np[i] = pct; return np; })); finalImageUrls[i] = res.url; localPublicIds[i] = res.public_id || null; setUploadFiles(prev => { const nf = [...prev]; nf[i] = null; return nf; }); setUploadProgress(prev => { const np = [...prev]; np[i] = 100; return np; }); } catch (err) { setUploadProgress(prev => { const np = [...prev]; np[i] = -1; return np; }); } } }
@@ -216,20 +227,15 @@ export const LaptopForm: React.FC<LaptopFormProps> = ({ laptop, onSave, onCancel
                     </div>
                 </div>
 
-                <div className="form-row-compact" style={{gridTemplateColumns: '1fr 1fr'}}>
-                    <div className="form-group"><label>Harga (IDR)</label>
-                        <input
-                            name="price"
-                            value={formData.price === '' ? '' : new Intl.NumberFormat('id-ID').format(Number(formData.price))}
-                            onChange={handlePriceInputChange}
-                            inputMode="numeric"
-                            placeholder="cth: 1.500.000"
-                        />
-                    </div>
-                    <div className="form-group"><label>Kelengkapan / yang didapat</label>
-                        {formData.inclusions && formData.inclusions.length > 0 && (<div className="selected-facilities-list">{formData.inclusions.map((inc:string)=> (<div key={inc} className="selected-facility-item"><span>{inc}</span><button type="button" onClick={()=>removeInclusion(inc)}>&times;</button></div>))}</div>)}
-                        <div style={{display:'flex', gap:8, marginTop:8}}><input value={customInclusion} onChange={(e)=>setCustomInclusion(e.target.value)} placeholder="Tambah kelengkapan..." /> <button type="button" className="btn btn-secondary" onClick={addInclusion}>Tambah</button></div>
-                    </div>
+                <div className="form-group">
+                    <label>Harga (IDR)</label>
+                    <input
+                        name="price"
+                        value={formData.price === '' ? '' : new Intl.NumberFormat('id-ID').format(Number(formData.price))}
+                        onChange={handlePriceInputChange}
+                        inputMode="numeric"
+                        placeholder="cth: 1.500.000"
+                    />
                 </div>
 
                 <div className="form-group">
@@ -311,7 +317,7 @@ export const LaptopForm: React.FC<LaptopFormProps> = ({ laptop, onSave, onCancel
 
                 <div className="form-group">
                     <label>Deskripsi</label>
-                    <ReactQuill theme="snow" value={formData.description || ''} onChange={handleDescriptionChange} />
+                    <ReactQuill className="description-editor" theme="snow" value={formData.description || ''} onChange={handleDescriptionChange} modules={modules} />
                 </div>
 
                 <div className="form-actions"><button type="button" className="btn btn-secondary" onClick={onCancel} disabled={isSaving}>Batal</button>
