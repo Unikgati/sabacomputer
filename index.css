@@ -912,10 +912,10 @@ body.dark .wishlist-btn:hover {
 .main-image .wishlist-btn svg { width: 20px; height: 20px; }
 
 .card-content {
-    padding: 0.3rem;
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
 }
 
 .card-category-list {
@@ -3738,7 +3738,7 @@ input[type="color"]::-moz-color-swatch {
     }
 
     .homepage-grid .destination-card .card-content {
-        padding: 0.3rem;
+        padding: 1rem;
     }
 
     .homepage-grid .destination-card .card-content h3 {
