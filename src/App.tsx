@@ -657,7 +657,7 @@ const App = () => {
   // New routing using react-router while keeping legacy `setPage` for compatibility
   const renderRoutes = () => (
     <Routes>
-  <Route path="/" element={<HomePage onSearch={handleSearch} onViewDetail={handleViewDetail} onBookNow={handleBookNow} onViewBlogDetail={handleViewBlogDetail} setPage={setPage} destinations={destinations} blogPosts={blogPosts} appSettings={appSettings} isLoading={homeIsLoading} reviews={reviews} />} />
+  <Route path="/" element={<HomePage onSearch={handleSearch} onViewDetail={handleViewDetail} onBookNow={handleBookNow} onViewBlogDetail={handleViewBlogDetail} setPage={setPage} destinations={destinations} allLaptops={laptops} blogPosts={blogPosts} appSettings={appSettings} isLoading={homeIsLoading} reviews={reviews} />} />
   <Route path="/destinations" element={<DestinationsPage allDestinations={destinations} onViewDetail={handleViewDetail} onBookNow={handleBookNow} isLoading={homeIsLoading} />} />
   <Route path="/destinations/:slug" element={<DestinationDetailWrapper />} />
   {/* Order page removed */}
@@ -666,7 +666,7 @@ const App = () => {
   <Route path="/laptops/:slug" element={<LaptopDetailWrapper />} />
   <Route path="/laptops" element={<LaptopsPage allLaptops={laptops} onViewDetail={(l) => { try { setPage && setPage('destinationDetail'); } catch {} ; try { navigate(`/laptops/${l.slug || l.id}`); } catch {} }} onBuyNow={(l) => { /* placeholder */ }} isLoading={homeIsLoading} />} />
       <Route path="/search" element={<SearchResultsPage query={searchQuery} setPage={setPage} onViewDetail={handleViewDetail} onBookNow={handleBookNow} allDestinations={destinations} />} />
-      <Route path="/wishlist" element={<WishlistPage setPage={setPage} onViewDetail={handleViewDetail} onBookNow={handleBookNow} allDestinations={destinations} />} />
+  <Route path="/wishlist" element={<WishlistPage setPage={setPage} onViewDetail={handleViewDetail} onBookNow={handleBookNow} allDestinations={laptops} />} />
       <Route path="/contact" element={<ContactPage />} />
       <Route path="/reviews" element={<ReviewsPage />} />
   <Route path="/admin/*" element={isAuthenticated ? (
