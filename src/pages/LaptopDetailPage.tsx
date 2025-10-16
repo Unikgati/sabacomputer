@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import DOMPurify from 'dompurify';
 import Seo from '../components/Seo';
+import Loading from '../components/Loading';
 import { useWishlist } from '../contexts/WishlistContext';
 import { HeartIcon } from '../components/Icons';
 import { useNavigate } from 'react-router-dom';
@@ -45,7 +46,7 @@ export const LaptopDetailPage: React.FC<LaptopDetailPageProps> = ({ laptop, setP
     return () => window.removeEventListener('keydown', handler);
   }, [imgs.length]);
 
-  if (isLoading) return <div className="page-container"><div className="container">Memuat...</div></div>;
+  if (isLoading) return <div className="page-container"><div className="container"><Loading message="Memuat..." size="large" /></div></div>;
 
   return (
     <div className="page-container laptop-detail-page">
