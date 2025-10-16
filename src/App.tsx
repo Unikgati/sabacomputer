@@ -666,7 +666,7 @@ const App = () => {
   <Route path="/laptops/:slug" element={<LaptopDetailWrapper />} />
   <Route path="/laptops" element={<LaptopsPage allLaptops={laptops} onViewDetail={(l) => { try { setPage && setPage('destinationDetail'); } catch {} ; try { navigate(`/laptops/${l.slug || l.id}`); } catch {} }} onBuyNow={(l) => { /* placeholder */ }} isLoading={homeIsLoading} />} />
       <Route path="/search" element={<SearchResultsPage query={searchQuery} setPage={setPage} onViewDetail={handleViewDetail} onBookNow={handleBookNow} allDestinations={destinations} />} />
-      <Route path="/wishlist" element={<WishlistPage setPage={setPage} onViewDetail={handleViewDetail} onBookNow={handleBookNow} allDestinations={destinations} />} />
+  <Route path="/wishlist" element={<WishlistPage setPage={setPage} onViewDetail={handleViewDetail} onBuy={(l:any) => { /* placeholder */ }} allLaptops={laptops} />} />
       <Route path="/contact" element={<ContactPage />} />
       <Route path="/reviews" element={<ReviewsPage />} />
   <Route path="/admin/*" element={isAuthenticated ? (
