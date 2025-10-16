@@ -1582,19 +1582,10 @@ body.dark .specs-card .specs-table th.specs-key {
     }
     .laptop-detail-grid .left-column { order: 1; }
     .laptop-detail-grid .right-column { order: 2; }
-    .right-column { position: relative; }
-    .right-column .specs-card { position: sticky; top: 120px; }
-}
-
-/* Reduce main image max width on larger screens so it doesn't dominate layout */
-@media (min-width: 880px) {
-    .left-column { display: flex; flex-direction: column; align-items: center; }
-    .left-column .main-image.square { max-width: 520px; width: 100%; }
-    .left-column .thumbnail-grid { max-width: 520px; margin: 0.75rem auto 0; }
-}
-@media (min-width: 1200px) {
-    .left-column .main-image.square { max-width: 640px; }
-    .left-column .thumbnail-grid { max-width: 640px; }
+    /* Make the entire right column sticky so the specs area stays visible while scrolling */
+    .right-column { position: sticky; top: 120px; align-self: start; }
+    /* inner specs-card can remain static inside the sticky column */
+    .right-column .specs-card { position: static; }
 }
 
 .booking-bar-content {
