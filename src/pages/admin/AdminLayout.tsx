@@ -3,6 +3,7 @@ import { Destination, BlogPost, Page, AppSettings } from '../../types';
 import { AdminDashboardPage } from './AdminDashboardPage';
 import { AdminDestinationsPage } from './AdminDestinationsPage';
 import { AdminBlogPage } from './AdminBlogPage';
+import AdminLaptopsPage from './AdminLaptopsPage';
 // Orders and invoices removed per feature flag. AdminOrdersPage and InvoicePage removed.
 import { AdminSettingsPage } from './AdminSettingsPage';
 import { SunIcon, MoonIcon, MenuIcon, RefreshIcon } from '../../components/Icons';
@@ -10,7 +11,7 @@ import { useTheme } from '../../contexts/ThemeContext';
 import { useToast } from '../../components/Toast';
 import { NavLink, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 
-type AdminSubPage = 'dashboard' | 'destinations' | 'blog' | 'settings';
+type AdminSubPage = 'dashboard' | 'destinations' | 'laptops' | 'blog' | 'settings';
 
 interface AdminLayoutProps {
     setPage: (page: Page) => void;
@@ -18,8 +19,12 @@ interface AdminLayoutProps {
     destinations: Destination[];
     blogPosts: BlogPost[];
     // orders removed
+    laptops?: any[];
     onSaveDestination: (destination: Destination) => void;
     onDeleteDestination: (id: number) => void;
+    // Laptops (new feature)
+    onSaveLaptop?: (laptop: any) => void;
+    onDeleteLaptop?: (id: number) => void;
     onSaveBlogPost: (post: BlogPost) => void;
     onDeleteBlogPost: (id: number) => void;
     // order-related handlers removed
@@ -30,8 +35,9 @@ interface AdminLayoutProps {
 }
 
 export const AdminLayout: React.FC<AdminLayoutProps> = ({ 
-    setPage, onLogout, destinations, blogPosts, 
+    setPage, onLogout, destinations, blogPosts, laptops,
     onSaveDestination, onDeleteDestination, onSaveBlogPost, onDeleteBlogPost,
+    onSaveLaptop, onDeleteLaptop,
     appSettings, setAppSettings, onSaveSettings, onRefresh
 }) => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -43,6 +49,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
     // Defensive: props may be null at runtime (from API fetch); ensure safe defaults
     const safeDestinations = destinations ?? [];
     const safeBlogPosts = blogPosts ?? [];
+    const safeLaptops = laptops ?? [];
     // orders removed; show zero counts where needed
     const safeOrders: any[] = [];
 
@@ -82,6 +89,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
                         <li><NavLink to="/admin" end className={({isActive}) => isActive ? 'active' : ''} onClick={() => setIsSidebarOpen(false)}>Dashboard</NavLink></li>
                         <li><NavLink to="/admin/destinations" className={({isActive}) => isActive ? 'active' : ''} onClick={() => setIsSidebarOpen(false)}>Destinasi</NavLink></li>
                         <li><NavLink to="/admin/blog" className={({isActive}) => isActive ? 'active' : ''} onClick={() => setIsSidebarOpen(false)}>Blog</NavLink></li>
+                        <li><NavLink to="/admin/laptops" className={({isActive}) => isActive ? 'active' : ''} onClick={() => setIsSidebarOpen(false)}>Laptop</NavLink></li>
                         <li><NavLink to="/admin/settings" className={({isActive}) => isActive ? 'active' : ''} onClick={() => setIsSidebarOpen(false)}>Pengaturan</NavLink></li>
                     </ul>
                     <div style={{ marginTop: 'auto', paddingTop: '1rem', borderTop: '1px solid var(--border-color)' }}>
@@ -144,6 +152,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
                         <Route index element={<AdminDashboardPage destinationCount={safeDestinations.length} blogPostCount={safeBlogPosts.length} totalOrders={safeOrders.length} newOrders={safeOrders.filter(o => o.status === 'Baru').length} />} />
                         <Route path="destinations" element={<AdminDestinationsPage destinations={safeDestinations} onSave={onSaveDestination} onDelete={onDeleteDestination} />} />
                         <Route path="blog" element={<AdminBlogPage blogPosts={safeBlogPosts} onSave={onSaveBlogPost} onDelete={onDeleteBlogPost} />} />
+                        <Route path="laptops" element={onSaveLaptop ? <AdminLaptopsPage laptops={safeLaptops} onSave={onSaveLaptop} onDelete={onDeleteLaptop || (() => {})} /> : <div className="admin-page-container">Halaman Laptop belum dikonfigurasi.</div>} />
                         {/* Orders & invoices removed */}
                         {/* Note: public /invoice/:invoiceId route is registered at app-level (App.tsx) */}
                         <Route path="settings" element={<AdminSettingsPage appSettings={appSettings} onSaveSettings={onSaveSettings} />} />

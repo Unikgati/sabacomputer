@@ -94,22 +94,21 @@ const App = () => {
   const [destinations, setDestinations] = useState<Destination[]>([]);
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
   const [reviews, setReviews] = useState<any[]>([]);
+  const [laptops, setLaptops] = useState<any[]>([]);
 
   // If Supabase env is configured, load remote data on mount
   useEffect(() => {
     const useSupabase = !!import.meta.env.VITE_SUPABASE_URL && !!import.meta.env.VITE_SUPABASE_ANON_KEY;
-    if (!useSupabase) return;
+  if (!useSupabase) return;
 
     let mounted = true;
     (async () => {
   try {
-    const remoteDestinations = await fetchDestinations();
-    const remoteBlog = await fetchBlogPosts();
-    const remoteReviews = await fetchReviews();
+    const [remoteDestinations, remoteBlog, remoteReviews, remoteLaptops] = await Promise.all([fetchDestinations(), fetchBlogPosts(), fetchReviews(), (async () => { try { const mod = await import('./lib/supabase'); return (mod as any).fetchLaptops ? (mod as any).fetchLaptops() : []; } catch { return []; } })()]);
     if (!mounted) return;
         // Always apply remote results even when empty arrays are returned. This ensures
         // the app mirrors Supabase state (empty) instead of silently keeping local seed data.
-        if (Array.isArray(remoteDestinations)) {
+  if (Array.isArray(remoteDestinations)) {
     // debug log removed in production build
           setDestinations(remoteDestinations as unknown as Destination[]);
           setSupabaseFetchStatus(prev => ({ ...prev, destinations: `ok (${remoteDestinations.length})`}));
@@ -118,7 +117,7 @@ const App = () => {
           setSupabaseFetchStatus(prev => ({ ...prev, destinations: 'invalid-shape' }));
         }
 
-        if (Array.isArray(remoteBlog)) {
+  if (Array.isArray(remoteBlog)) {
           // debug log removed in production build
           setBlogPosts(remoteBlog as unknown as BlogPost[]);
           setSupabaseFetchStatus(prev => ({ ...prev, blog: `ok (${remoteBlog.length})`}));
@@ -130,6 +129,10 @@ const App = () => {
         if (Array.isArray(remoteReviews)) {
           setReviews(remoteReviews || []);
           setSupabaseFetchStatus(prev => ({ ...prev, reviews: `ok (${remoteReviews.length})`}));
+        }
+        if (Array.isArray(remoteLaptops)) {
+          setLaptops(remoteLaptops || []);
+          setSupabaseFetchStatus(prev => ({ ...prev, laptops: `ok (${remoteLaptops.length})`}));
         }
       } catch (err) {
         console.warn('Supabase fetch failed, keeping local seed data', err);
@@ -506,6 +509,64 @@ const App = () => {
     }
   };
 
+  // CRUD Handlers for Laptops
+  const handleSaveLaptop = async (laptop: any) => {
+    const useSupabase = !!import.meta.env.VITE_SUPABASE_URL && !!import.meta.env.VITE_SUPABASE_ANON_KEY;
+    if (!useSupabase) {
+      if (laptop.id === 0) {
+        const newLaptop = { ...laptop, id: Date.now() };
+        setLaptops(prev => [...prev, newLaptop]);
+        return newLaptop;
+      } else {
+        setLaptops(prev => prev.map(l => l.id === laptop.id ? laptop : l));
+        return laptop;
+      }
+    }
+
+    try {
+      // try to use upsertLaptops from lib if available
+      const mod = await import('./lib/supabase');
+      if (mod && (mod as any).upsertLaptop) {
+        const saved = await (mod as any).upsertLaptop(laptop);
+        if (saved) {
+          setLaptops(prev => {
+            const exists = prev.some(d => d.id === saved.id);
+            if (exists) return prev.map(d => d.id === saved.id ? saved : d);
+            return [...prev, saved];
+          });
+          return saved;
+        }
+      }
+    } catch (err) {
+      console.error('Failed to save laptop to Supabase, falling back to local state', err);
+      if (laptop.id === 0) {
+        const newLaptop = { ...laptop, id: Date.now() };
+        setLaptops(prev => [...prev, newLaptop]);
+      } else {
+        setLaptops(prev => prev.map(d => d.id === laptop.id ? laptop : d));
+      }
+      throw err;
+    }
+  };
+
+  const handleDeleteLaptop = async (id: number) => {
+    const useSupabase = !!import.meta.env.VITE_SUPABASE_URL && !!import.meta.env.VITE_SUPABASE_ANON_KEY;
+    if (!useSupabase) {
+      setLaptops(prev => prev.filter(d => d.id !== id));
+      return;
+    }
+    try {
+      const mod = await import('./lib/supabase');
+      if (mod && (mod as any).deleteLaptop) {
+        await (mod as any).deleteLaptop(id);
+      }
+      setLaptops(prev => prev.filter(d => d.id !== id));
+    } catch (err) {
+      console.error('Failed to delete laptop from Supabase', err);
+      throw err;
+    }
+  };
+
 
   // Order-related handlers and public order page removed
 
@@ -593,10 +654,13 @@ const App = () => {
             onRefresh={handleRefresh}
             destinations={destinations}
             blogPosts={blogPosts}
+            laptops={laptops}
             onSaveDestination={handleSaveDestination}
             onDeleteDestination={handleDeleteDestination}
             onSaveBlogPost={handleSaveBlogPost}
             onDeleteBlogPost={handleDeleteBlogPost}
+            onSaveLaptop={handleSaveLaptop}
+            onDeleteLaptop={handleDeleteLaptop}
             appSettings={appSettings}
             setAppSettings={setAppSettings}
             onSaveSettings={handleSaveSettings}
