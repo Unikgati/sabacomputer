@@ -224,6 +224,15 @@ export const HomePage: React.FC<HomePageProps> = ({ onSearch, onViewDetail, onBo
         return Array.from(new Set(destinations.flatMap(d => d.categories || [])));
     }, [destinations]);
 
+    // derive product names from laptops to use as typing phrases in the hero search
+    const productNames = React.useMemo(() => {
+        try {
+            if (!laptops || laptops.length === 0) return [] as string[];
+            const names = Array.from(new Set(laptops.map((l: any) => (l?.name || '').trim()).filter(Boolean)));
+            return names.slice(0, 12);
+        } catch (e) { return [] as string[]; }
+    }, [laptops]);
+
     const [activeBookingDest, setActiveBookingDest] = useState<Destination | null>(null);
     const navigate = useNavigate();
 
@@ -240,7 +249,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onSearch, onViewDetail, onBo
                 image={appSettings?.logoLightUrl || undefined}
                 siteName={appSettings?.brandName || 'TravelGo'}
             />
-            <Hero onSearch={onSearch} slides={appSettings.heroSlides} categories={categories} />
+            <Hero onSearch={onSearch} slides={appSettings.heroSlides} categories={productNames.length ? productNames : categories} />
             {/* Destinations sections removed from homepage per request */}
 
             {/* Laptop products section */}
