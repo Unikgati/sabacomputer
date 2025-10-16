@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { useToast } from '../../components/Toast';
+import ReactQuill from 'react-quill';
 import { XIcon, UploadCloudIcon, StarIcon, SpinnerIcon } from '../Icons';
 import uploadToCloudinary from '../../lib/cloudinary';
 import { ConfirmationModal } from '../ConfirmationModal';
@@ -60,6 +61,10 @@ export const LaptopForm: React.FC<LaptopFormProps> = ({ laptop, onSave, onCancel
     const addInclusion = () => { if (!customInclusion.trim()) return; if ((formData.inclusions || []).includes(customInclusion.trim())) return; setFormData((p:any) => ({ ...p, inclusions: [...(p.inclusions || []), customInclusion.trim()] })); setCustomInclusion(''); };
     const removeInclusion = (inc: string) => setFormData((p:any) => ({ ...p, inclusions: (p.inclusions || []).filter((i:string) => i !== inc) }));
 
+    const handleDescriptionChange = (value: string) => {
+        setFormData((p: any) => ({ ...p, description: value }));
+    };
+
     const handleSubmit = (e: React.FormEvent) => { e.preventDefault(); setIsSaving(true); setTimeout(async () => {
         const finalImageUrls = [...imageUrls]; const localPublicIds = finalImageUrls.map((_, i) => (publicIds[i] ?? null));
         for (let i = 0; i < finalImageUrls.length; i++) { const file = uploadFiles[i]; if (file) { try { setUploadProgress(prev => { const np = [...prev]; np[i] = 0; return np; }); const res = await uploadToCloudinary(file, (pct: number) => setUploadProgress(prev => { const np = [...prev]; np[i] = pct; return np; })); finalImageUrls[i] = res.url; localPublicIds[i] = res.public_id || null; setUploadFiles(prev => { const nf = [...prev]; nf[i] = null; return nf; }); setUploadProgress(prev => { const np = [...prev]; np[i] = 100; return np; }); } catch (err) { setUploadProgress(prev => { const np = [...prev]; np[i] = -1; return np; }); } } }
@@ -88,7 +93,24 @@ export const LaptopForm: React.FC<LaptopFormProps> = ({ laptop, onSave, onCancel
                     <input type="file" ref={fileInputRef} className="hidden-file-input" multiple accept="image/*" onChange={handleFileChange} />
                     </div></div>
 
-                <div className="form-group"><label>Deskripsi</label><textarea name="description" value={formData.description} onChange={handleChange} /></div>
+                <div className="form-group"><label>Deskripsi</label>
+                    <ReactQuill
+                        className="description-editor"
+                        theme="snow"
+                        value={formData.description || ''}
+                        onChange={handleDescriptionChange}
+                        modules={{
+                            toolbar: [
+                                [{ 'header': [1, 2, 3, false] }],
+                                ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+                                [{'list': 'ordered'}, {'list': 'bullet'}],
+                                [{ 'align': [] }],
+                                ['link'],
+                                ['clean']
+                            ]
+                        }}
+                    />
+                </div>
 
                 <div className="form-group"><label>Kategori</label><input name="categories" value={(formData.categories || []).join(', ')} onChange={(e)=> setFormData((p:any)=>({...p, categories: String(e.target.value).split(',').map((s:string)=>s.trim()).filter(Boolean)}))} placeholder="pisahkan dengan koma" /></div>
 
