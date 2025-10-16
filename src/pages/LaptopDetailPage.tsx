@@ -65,7 +65,9 @@ export const LaptopDetailPage: React.FC<LaptopDetailPageProps> = ({ laptop, setP
                       onClick={() => setCurrentIndex(i => (imgs.length ? (i - 1 + imgs.length) % imgs.length : 0))}
                       aria-label="Gambar sebelumnya"
                     >
-                      ‹
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                        <path d="M15 18l-6-6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
                     </button>
                     <button
                       type="button"
@@ -73,7 +75,9 @@ export const LaptopDetailPage: React.FC<LaptopDetailPageProps> = ({ laptop, setP
                       onClick={() => setCurrentIndex(i => (imgs.length ? (i + 1) % imgs.length : 0))}
                       aria-label="Gambar berikutnya"
                     >
-                      ›
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                        <path d="M9 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
                     </button>
                   </>
                 )}
