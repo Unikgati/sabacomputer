@@ -154,36 +154,52 @@ export const LaptopForm: React.FC<LaptopFormProps> = ({ laptop, onSave, onCancel
     const generateDescription = () => {
         const name = formData.name || '';
         const brands = (formData.categories || []).join(', ');
-        const specs: string[] = [];
-        if (formData.ram) specs.push(`RAM: ${formData.ram}`);
-        if (formData.storage) specs.push(`Storage: ${formData.storage}`);
-        if (formData.cpu) specs.push(`CPU: ${formData.cpu}`);
-        if (formData.displayInch) specs.push(`Layar: ${formData.displayInch}\"`);
-        if (formData.condition) specs.push(`Kondisi: ${formData.condition === 'new' ? 'Baru' : 'Bekas'}`);
-        if (formData.grade) specs.push(`Grade: ${formData.grade}`);
-        const priceText = formData.price ? `Harga: Rp ${formatPrice(formData.price)}` : '';
-
         const features = formData.features || [];
         const accessories = formData.accessories || [];
 
-        // Build HTML template
-        let html = '';
+        const condText = formData.condition === 'new' ? 'baru' : 'bekas';
+        const gradeText = formData.grade ? `Grade ${formData.grade}` : '';
+
+        const paragraphs: string[] = [];
+
+        // Intro paragraph
         if (name) {
-            html += `<p><strong>${name}</strong>${brands ? ` — ${brands}` : ''}${priceText ? ` • ${priceText}` : ''}</p>`;
+            let intro = `${name}`;
+            if (brands) intro += ` dari ${brands}`;
+            intro += ` merupakan ${formData.condition === 'new' ? 'unit baru' : 'unit bekas'}`;
+            if (gradeText && formData.condition !== 'new') intro += ` dengan ${gradeText}`;
+            if (formData.price) intro += `, ditawarkan dengan harga Rp ${formatPrice(formData.price)}`;
+            intro += `.`;
+            paragraphs.push(`<p>${intro}</p>`);
         }
-        if (specs.length > 0) {
-            html += `<p><strong>Spesifikasi Utama:</strong></p><ul>` + specs.map(s => `<li>${s}</li>`).join('') + `</ul>`;
+
+        // Specs paragraph
+        const specParts: string[] = [];
+        if (formData.cpu) specParts.push(`${formData.cpu}`);
+        if (formData.ram) specParts.push(`RAM ${formData.ram}`);
+        if (formData.storage) specParts.push(`${formData.storage}`);
+        if (formData.displayInch) specParts.push(`layar ${formData.displayInch}\"`);
+        if (specParts.length > 0) {
+            const specSentence = `Performa ditopang oleh ${specParts.join(', ').replace(/, ([^,]*)$/, ' dan $1')}.`;
+            paragraphs.push(`<p>${specSentence}</p>`);
         }
+
+        // Features & accessories paragraph
+        const extraSentences: string[] = [];
         if (features.length > 0) {
-            html += `<p><strong>Kelebihan:</strong></p><ul>` + features.map(f => `<li>${f}</li>`).join('') + `</ul>`;
+            extraSentences.push(`Kelebihan utama meliputi ${features.join(', ').replace(/, ([^,]*)$/, ' dan $1')}`);
         }
         if (accessories.length > 0) {
-            html += `<p><strong>Kelengkapan:</strong></p><ul>` + accessories.map(a => `<li>${a}</li>`).join('') + `</ul>`;
+            extraSentences.push(`Kelengkapan yang disertakan: ${accessories.join(', ').replace(/, ([^,]*)$/, ' dan $1')}`);
         }
-        if (!html) html = `<p>${name || 'Laptop ini'}. Deskripsi singkat belum tersedia.</p>`;
+        if (extraSentences.length > 0) {
+            paragraphs.push(`<p>${extraSentences.join('. ')}.</p>`);
+        }
 
-        // Set into editor
-        try { handleDescriptionChange(html); showToast('Deskripsi telah digenerate', 'success'); } catch (e) { handleDescriptionChange(html); }
+        let html = paragraphs.join('');
+        if (!html) html = `<p>${name || 'Laptop ini'} — deskripsi singkat belum tersedia.</p>`;
+
+        try { handleDescriptionChange(html); showToast('Deskripsi naratif telah digenerate', 'success'); } catch (e) { handleDescriptionChange(html); }
     };
 
     const handleSubmit = (e: React.FormEvent) => { e.preventDefault(); setIsSaving(true); setTimeout(async () => {
