@@ -1554,6 +1554,7 @@ body.dark .accessory-badge {
     padding: 0.75rem 1rem;
     border-radius: 8px;
     background: transparent; /* keep same bg, but allow subtle border if desired */
+    margin-top: 0;
 }
 /* Make accessories heading match specs-card header sizing */
 .accessories-section h3 {
@@ -1566,6 +1567,7 @@ body.dark .accessory-badge {
     padding: 0.75rem 1rem;
     border-radius: 8px;
     background: transparent;
+    margin-top: 0;
 }
 .features-section h3 { margin: 0; font-size: 1rem; }
 .features-badges {
