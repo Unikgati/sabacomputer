@@ -2745,6 +2745,11 @@ body.dark .admin-item-badge.out-of-stock {
     border-color: color-mix(in srgb, var(--accent) 36%, #222 64%);
 }
 
+/* Give accessories section a little breathing room at the bottom */
+.accessories-section {
+    padding-bottom: 1rem;
+}
+
 .admin-form .form-group {
     margin-bottom: 1.5rem;
 }
