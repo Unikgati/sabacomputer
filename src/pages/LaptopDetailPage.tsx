@@ -13,7 +13,6 @@ export const LaptopDetailPage: React.FC<LaptopDetailPageProps> = ({ laptop, setP
   const [isLoading, setIsLoading] = useState(true);
   const imgs = useMemo(() => (Array.isArray(laptop.galleryImages) && laptop.galleryImages.length > 0) ? laptop.galleryImages : (laptop.imageUrl ? [laptop.imageUrl] : []), [laptop.galleryImages, laptop.imageUrl]);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [activeTab, setActiveTab] = useState<'about' | 'specs' | 'accessories'>('about');
   const mainImageContainerRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => { const t = setTimeout(() => setIsLoading(false), 300); return () => clearTimeout(t); }, []);
 
@@ -50,49 +49,56 @@ export const LaptopDetailPage: React.FC<LaptopDetailPageProps> = ({ laptop, setP
 
         <div className="destination-content-layout">
           <main className="destination-main-content">
-            <div className="destination-tabs">
-              <div className="tab-list" role="tablist" aria-label="Informasi Laptop">
-                <button className={`tab-button ${activeTab === 'about' ? 'active' : ''}`} onClick={() => setActiveTab('about')} role="tab" aria-selected={activeTab === 'about'}>Deskripsi</button>
-                <button className={`tab-button ${activeTab === 'specs' ? 'active' : ''}`} onClick={() => setActiveTab('specs')} role="tab" aria-selected={activeTab === 'specs'}>Spesifikasi</button>
-                <button className={`tab-button ${activeTab === 'accessories' ? 'active' : ''}`} onClick={() => setActiveTab('accessories')} role="tab" aria-selected={activeTab === 'accessories'}>Kelengkapan</button>
-              </div>
-            </div>
+            {/* Unified content: Description -> Specs (modern rounded table) -> Accessories */}
+            <section className="laptop-unified-content">
+              <div className="blog-detail-content" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(laptop.description || '') }} />
 
-            <div className="tab-panel">
-              {activeTab === 'about' && <div className="blog-detail-content" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(laptop.description || '') }} />}
-              {activeTab === 'specs' && (
-                <section className="specs-section">
-                  <table className="specs-table">
-                    <tbody>
-                      <tr><th>RAM</th><td>{laptop.ram || '-'}</td></tr>
-                      <tr><th>Storage</th><td>{laptop.storage || '-'}</td></tr>
-                      <tr><th>CPU</th><td>{laptop.cpu || '-'}</td></tr>
-                      <tr><th>Layar</th><td>{laptop.displayInch ? `${laptop.displayInch} inch` : '-'}</td></tr>
-                      <tr><th>Kondisi</th><td>{laptop.condition || '-'}</td></tr>
-                      <tr><th>Grade</th><td>{laptop.grade || '-'}</td></tr>
-                    </tbody>
-                  </table>
-                </section>
-              )}
-              {activeTab === 'accessories' && (
-                <section className="accessories-section">
+              <div className="specs-card" style={{ marginTop: '1.25rem', borderRadius: 12, overflow: 'hidden', boxShadow: '0 6px 18px rgba(0,0,0,0.06)' }}>
+                <div style={{ padding: '1rem 1rem', background: 'linear-gradient(180deg, #fff, #fafafa)' }}>
+                  <h3 style={{ margin: 0 }}>Spesifikasi</h3>
+                </div>
+                <table className="specs-table" style={{ width: '100%', borderCollapse: 'separate', borderSpacing: 0 }}>
+                  <tbody>
+                    {[
+                      ['RAM', laptop.ram || '-'],
+                      ['Storage', laptop.storage || '-'],
+                      ['CPU', laptop.cpu || '-'],
+                      ['Layar', laptop.displayInch ? `${laptop.displayInch} inch` : '-'],
+                      ['Kondisi', laptop.condition || '-'],
+                      ['Grade', laptop.grade || '-'],
+                    ].map(([k, v], i) => (
+                      <tr key={String(k)} style={{ background: i % 2 === 0 ? '#fff' : '#fbfbfb' }}>
+                        <th style={{ textAlign: 'left', padding: '0.85rem 1rem', width: '40%', fontWeight: 600 }}>{k}</th>
+                        <td style={{ padding: '0.85rem 1rem' }}>{v}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {(laptop.accessories && laptop.accessories.length > 0) && (
+                <section className="accessories-section" style={{ marginTop: '1rem' }}>
+                  <h3>Kelengkapan</h3>
                   <ul>
                     {(laptop.accessories || []).map((a:string, i:number) => (<li key={i}>{a}</li>))}
                   </ul>
                 </section>
               )}
-            </div>
+            </section>
           </main>
+        </div>
+      </div>
 
-          <aside className="info-sidebar">
-            <h3>Informasi Produk</h3>
-            <div className="info-item"><strong>Harga</strong><div>{formattedPrice}</div></div>
-            <div className="info-item"><strong>Kondisi</strong><div>{laptop.condition || '-'}</div></div>
-            <div className="info-item"><strong>Grade</strong><div>{laptop.grade || '-'}</div></div>
-            <div style={{ marginTop: '1rem' }}>
-              <button className="btn btn-primary btn-large" onClick={() => { try { onBuyNow && onBuyNow(laptop); } catch {} }}>Beli Sekarang</button>
-            </div>
-          </aside>
+      {/* Sticky buy bar (similar to destination) */}
+      <div className="sticky-booking-bar">
+        <div className="container booking-bar-content" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div>
+            <span className="booking-price-label">Harga</span>
+            <span className="booking-price" style={{ display: 'block', fontSize: '1.125rem', fontWeight: 700 }}>{formattedPrice}</span>
+          </div>
+          <div>
+            <button className="btn btn-primary btn-large" onClick={() => { try { onBuyNow && onBuyNow(laptop); } catch {} }}>Beli Sekarang</button>
+          </div>
         </div>
       </div>
     </div>
