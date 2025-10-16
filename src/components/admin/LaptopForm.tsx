@@ -14,7 +14,16 @@ interface LaptopFormProps {
 
 export const LaptopForm: React.FC<LaptopFormProps> = ({ laptop, onSave, onCancel, allCategories }) => {
     const { showToast } = useToast();
-    const initial = { ...laptop, price: laptop.id === 0 ? '' : laptop.price, inclusions: laptop.inclusions || [] };
+    const initial = { 
+        ...laptop, 
+        price: laptop.id === 0 ? '' : laptop.price, 
+        inclusions: laptop.inclusions || [],
+        ram: laptop.ram || '',
+        storage: laptop.storage || '',
+        cpu: laptop.cpu || '',
+        displayInch: laptop.displayInch === undefined || laptop.displayInch === null ? '' : laptop.displayInch,
+        condition: laptop.condition || 'second'
+    };
     const [formData, setFormData] = useState<any>(initial);
     const [imageUrls, setImageUrls] = useState<string[]>((laptop.galleryImages && laptop.galleryImages.length > 0) ? laptop.galleryImages : (laptop.imageUrl ? [laptop.imageUrl] : []));
     const [publicIds, setPublicIds] = useState<(string | null)[]>((laptop.galleryPublicIds && laptop.galleryPublicIds.length > 0) ? laptop.galleryPublicIds : (laptop.imagePublicId ? [laptop.imagePublicId] : []));
@@ -28,6 +37,7 @@ export const LaptopForm: React.FC<LaptopFormProps> = ({ laptop, onSave, onCancel
     const handleChange = (e: any) => {
         const { name, value } = e.target;
         if (name === 'price') setFormData((p: any) => ({ ...p, [name]: value === '' ? '' : Number(value) }));
+        else if (name === 'displayInch') setFormData((p: any) => ({ ...p, [name]: value === '' ? '' : Number(value) }));
         else setFormData((p: any) => ({ ...p, [name]: value }));
     };
 
@@ -70,7 +80,24 @@ export const LaptopForm: React.FC<LaptopFormProps> = ({ laptop, onSave, onCancel
         for (let i = 0; i < finalImageUrls.length; i++) { const file = uploadFiles[i]; if (file) { try { setUploadProgress(prev => { const np = [...prev]; np[i] = 0; return np; }); const res = await uploadToCloudinary(file, (pct: number) => setUploadProgress(prev => { const np = [...prev]; np[i] = pct; return np; })); finalImageUrls[i] = res.url; localPublicIds[i] = res.public_id || null; setUploadFiles(prev => { const nf = [...prev]; nf[i] = null; return nf; }); setUploadProgress(prev => { const np = [...prev]; np[i] = 100; return np; }); } catch (err) { setUploadProgress(prev => { const np = [...prev]; np[i] = -1; return np; }); } } }
         setPublicIds(localPublicIds);
         const slug = formData.slug && formData.slug.trim() !== '' ? formData.slug.trim() : String(formData.name || '').toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-        const finalData = { ...formData, slug, imageUrl: finalImageUrls[0] || '', galleryImages: finalImageUrls, imagePublicId: localPublicIds && localPublicIds[0] ? localPublicIds[0] : null, galleryPublicIds: localPublicIds && localPublicIds.length > 0 ? localPublicIds : [], ...(removedPublicIds && removedPublicIds.length > 0 ? { removed_public_ids: Array.from(new Set(removedPublicIds.filter(Boolean))) } : {}), price: formData.price === '' ? 0 : Number(formData.price) || 0, inclusions: formData.inclusions || [], categories: formData.categories || [] };
+        const finalData = {
+            ...formData,
+            slug,
+            imageUrl: finalImageUrls[0] || '',
+            galleryImages: finalImageUrls,
+            imagePublicId: localPublicIds && localPublicIds[0] ? localPublicIds[0] : null,
+            galleryPublicIds: localPublicIds && localPublicIds.length > 0 ? localPublicIds : [],
+            ...(removedPublicIds && removedPublicIds.length > 0 ? { removed_public_ids: Array.from(new Set(removedPublicIds.filter(Boolean))) } : {}),
+            price: formData.price === '' ? 0 : Number(formData.price) || 0,
+            inclusions: formData.inclusions || [],
+            categories: formData.categories || [],
+            // Specs
+            ram: formData.ram || '',
+            storage: formData.storage || '',
+            cpu: formData.cpu || '',
+            displayInch: formData.displayInch === '' ? 0 : Number(formData.displayInch) || 0,
+            condition: formData.condition || 'second'
+        };
         try { await onSave(finalData); } catch (err:any) { const msg = (err && err.message) ? err.message : 'Gagal menyimpan laptop'; try { showToast(msg, 'error'); } catch {} }
     setIsSaving(false); }, 1200); };
 
@@ -119,6 +146,39 @@ export const LaptopForm: React.FC<LaptopFormProps> = ({ laptop, onSave, onCancel
                     <div className="form-group"><label>Kelengkapan / yang didapat</label>
                         {formData.inclusions && formData.inclusions.length > 0 && (<div className="selected-facilities-list">{formData.inclusions.map((inc:string)=> (<div key={inc} className="selected-facility-item"><span>{inc}</span><button type="button" onClick={()=>removeInclusion(inc)}>&times;</button></div>))}</div>)}
                         <div style={{display:'flex', gap:8, marginTop:8}}><input value={customInclusion} onChange={(e)=>setCustomInclusion(e.target.value)} placeholder="Tambah kelengkapan..." /> <button type="button" className="btn btn-secondary" onClick={addInclusion}>Tambah</button></div>
+                    </div>
+                </div>
+
+                <div className="form-group">
+                    <label>Spesifikasi</label>
+                    <div style={{ display: 'grid', gap: '0.75rem' }}>
+                        <div className="form-row-compact" style={{ gridTemplateColumns: '1fr 1fr' }}>
+                            <div className="form-group">
+                                <label>RAM</label>
+                                <input name="ram" value={formData.ram} onChange={handleChange} placeholder="cth: 8GB, 16GB" />
+                            </div>
+                            <div className="form-group">
+                                <label>Storage</label>
+                                <input name="storage" value={formData.storage} onChange={handleChange} placeholder="cth: 256GB SSD" />
+                            </div>
+                        </div>
+                        <div className="form-row-compact" style={{ gridTemplateColumns: '1fr 1fr' }}>
+                            <div className="form-group">
+                                <label>CPU</label>
+                                <input name="cpu" value={formData.cpu} onChange={handleChange} placeholder="cth: Intel i5-1135G7" />
+                            </div>
+                            <div className="form-group">
+                                <label>Display (inch)</label>
+                                <input name="displayInch" value={formData.displayInch} onChange={handleChange} inputMode="decimal" placeholder="cth: 14" />
+                            </div>
+                        </div>
+                        <div className="form-group">
+                            <label>Kondisi</label>
+                            <select name="condition" value={formData.condition} onChange={handleChange}>
+                                <option value="second">Second</option>
+                                <option value="new">New</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
 
