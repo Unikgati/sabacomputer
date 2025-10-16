@@ -22,7 +22,8 @@ export const LaptopForm: React.FC<LaptopFormProps> = ({ laptop, onSave, onCancel
         storage: laptop.storage || '',
         cpu: laptop.cpu || '',
         displayInch: laptop.displayInch === undefined || laptop.displayInch === null ? '' : laptop.displayInch,
-        condition: laptop.condition || 'second'
+        condition: laptop.condition || 'second',
+        features: laptop.features || []
     };
     const [formData, setFormData] = useState<any>(initial);
     const [imageUrls, setImageUrls] = useState<string[]>((laptop.galleryImages && laptop.galleryImages.length > 0) ? laptop.galleryImages : (laptop.imageUrl ? [laptop.imageUrl] : []));
@@ -33,6 +34,9 @@ export const LaptopForm: React.FC<LaptopFormProps> = ({ laptop, onSave, onCancel
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [customInclusion, setCustomInclusion] = useState('');
     const [isSaving, setIsSaving] = useState(false);
+    const [featuresOpen, setFeaturesOpen] = useState(false);
+    const featuresButtonRef = useRef<HTMLButtonElement | null>(null);
+    const [featuresPos, setFeaturesPos] = useState<{left: number; top: number; width?: number} | null>(null);
     const [specSuggestions, setSpecSuggestions] = useState<Record<string, string[]>>({ ram: [], storage: [], cpu: [], displayInch: [] });
 
     const handleChange = (e: any) => {
@@ -79,6 +83,22 @@ export const LaptopForm: React.FC<LaptopFormProps> = ({ laptop, onSave, onCancel
     const handleSpecBadgeClick = (field: string, val: string) => {
         setFormData((p: any) => ({ ...p, [field]: val }));
     };
+
+    // close features popover when clicking outside
+    useEffect(() => {
+        if (!featuresOpen) return;
+        const onDocClick = (e: MouseEvent) => {
+            const target = e.target as Node;
+            const btn = featuresButtonRef.current;
+            if (!btn) return;
+            const popover = document.querySelector('[aria-label="Pilih Kelebihan"]');
+            if (popover && (popover === target || popover.contains(target))) return;
+            if (btn === target || btn.contains(target)) return;
+            setFeaturesOpen(false);
+        };
+        document.addEventListener('click', onDocClick);
+        return () => document.removeEventListener('click', onDocClick);
+    }, [featuresOpen]);
 
     // Price input: format with dots every 3 digits for display, keep numeric in state
     const handlePriceInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -263,6 +283,45 @@ export const LaptopForm: React.FC<LaptopFormProps> = ({ laptop, onSave, onCancel
                             </select>
                         </div>
                     </div>
+                </div>
+
+                <div className="form-group">
+                    <label>Kelebihan (Features)</label>
+                    <div style={{ position: 'relative' }}>
+                        <button ref={featuresButtonRef} type="button" className="btn btn-secondary" onClick={() => {
+                            if (featuresButtonRef.current) {
+                                const r = featuresButtonRef.current.getBoundingClientRect();
+                                setFeaturesPos({ left: Math.max(8, r.left), top: r.bottom + 8, width: Math.max(280, r.width) });
+                            }
+                            setFeaturesOpen(prev => !prev);
+                        }}>{(formData.features && formData.features.length > 0) ? `${formData.features.length} terpilih` : 'Pilih Kelebihan'}</button>
+                        {featuresOpen && featuresPos && (
+                            <div
+                                role="dialog"
+                                aria-label="Pilih Kelebihan"
+                                style={{ position: 'fixed', left: featuresPos.left, top: featuresPos.top, zIndex: 2100, background: 'var(--bg-primary)', border: '1px solid var(--border-color)', borderRadius: 8, padding: '0.75rem', minWidth: featuresPos.width }}
+                            >
+                                {['Touchscreen','360° Hinge','Backlit Keyboard','Fingerprint Reader','Dedicated GPU','Thunderbolt','Lightweight','Long Battery','Numeric Keypad','IPS Display'].map(feature => (
+                                    <div key={feature} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '0.35rem 0.25rem' }}>
+                                        <input type="checkbox" id={`feat-${feature}`} checked={(formData.features || []).includes(feature)} onChange={() => {
+                                            const current = formData.features || [];
+                                            const next = current.includes(feature) ? current.filter((f:string)=>f!==feature) : [...current, feature];
+                                            setFormData((p:any)=>({...p, features: next}));
+                                        }} />
+                                        <label htmlFor={`feat-${feature}`} style={{ cursor: 'pointer' }}>{feature}</label>
+                                    </div>
+                                ))}
+                                <div style={{ marginTop: 8, display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+                                    <button type="button" className="btn btn-secondary" onClick={() => setFeaturesOpen(false)}>Tutup</button>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                    {formData.features && formData.features.length > 0 && (
+                        <div className="suggestion-badges" style={{ marginTop: 8 }}>
+                            {formData.features.map((f:string) => (<span key={f} className="facility-badge">{f}</span>))}
+                        </div>
+                    )}
                 </div>
 
                 <div className="form-actions"><button type="button" className="btn btn-secondary" onClick={onCancel} disabled={isSaving}>Batal</button>
