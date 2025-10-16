@@ -2722,8 +2722,9 @@ body.dark .toggle-switch.on {
 .admin-item-card { position: relative; }
 .admin-item-badge {
     position: absolute;
-    top: 8px;
+    top: 50%;
     left: 8px;
+    transform: translateY(-50%);
     padding: 4px 8px;
     border-radius: 999px;
     font-size: 0.75rem;
@@ -2731,6 +2732,7 @@ body.dark .toggle-switch.on {
     z-index: 5;
     display: inline-flex;
     align-items: center;
+    pointer-events: none; /* avoid intercepting clicks on the card */
 }
 .admin-item-badge.out-of-stock {
     background: color-mix(in srgb, #fff 86%, var(--accent) 14%);
