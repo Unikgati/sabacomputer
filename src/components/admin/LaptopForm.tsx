@@ -171,58 +171,49 @@ export const LaptopForm: React.FC<LaptopFormProps> = ({ laptop, onSave, onCancel
                     <input type="file" ref={fileInputRef} className="hidden-file-input" multiple accept="image/*" onChange={handleFileChange} />
                     </div></div>
 
-                <div className="form-group"><label>Deskripsi</label>
-                    <ReactQuill
-                        className="description-editor"
-                        theme="snow"
-                        value={formData.description || ''}
-                        onChange={handleDescriptionChange}
-                        modules={{
-                            toolbar: [
-                                [{ 'header': [1, 2, 3, false] }],
-                                ['bold', 'italic', 'underline', 'strike', 'blockquote'],
-                                [{'list': 'ordered'}, {'list': 'bullet'}],
-                                [{ 'align': [] }],
-                                ['link'],
-                                ['clean']
-                            ]
-                        }}
-                    />
-                </div>
+                
 
-                <div className="form-group">
-                    <label>Brand</label>
-                    <input
-                        name="categories"
-                        value={(formData.categories || []).join(', ')}
-                        onChange={(e)=> setFormData((p:any)=>({...p, categories: String(e.target.value).split(',').map((s:string)=>s.trim()).filter(Boolean)}))}
-                        onBlur={(e) => {
-                            // save last token as brand suggestion
-                            const val = String(e.target.value || '');
-                            const parts = val.split(',').map(s=>s.trim()).filter(Boolean);
-                            const last = parts.length > 0 ? parts[parts.length-1] : '';
-                            if (last) saveSuggestion('brand', last);
-                        }}
-                        placeholder="pisahkan dengan koma (cth: Asus, Dell)"
-                    />
-                    {specSuggestions.brand && specSuggestions.brand.length > 0 && (
-                        <div className="suggestion-badges" style={{ marginTop: 8 }}>
-                            {specSuggestions.brand.map((s) => (
-                                <button
-                                    type="button"
-                                    key={s}
-                                    className="suggestion-badge"
-                                    onClick={() => {
-                                        setFormData((p:any) => {
-                                            const current = p.categories || [];
-                                            if (current.includes(s)) return p;
-                                            return { ...p, categories: [...current, s] };
-                                        });
-                                    }}
-                                >{s}</button>
-                            ))}
-                        </div>
-                    )}
+                <div className="form-row-compact" style={{ gridTemplateColumns: '1fr 1fr' }}>
+                    <div className="form-group">
+                        <label>Brand</label>
+                        <input
+                            name="categories"
+                            value={(formData.categories || []).join(', ')}
+                            onChange={(e)=> setFormData((p:any)=>({...p, categories: String(e.target.value).split(',').map((s:string)=>s.trim()).filter(Boolean)}))}
+                            onBlur={(e) => {
+                                // save last token as brand suggestion
+                                const val = String(e.target.value || '');
+                                const parts = val.split(',').map(s=>s.trim()).filter(Boolean);
+                                const last = parts.length > 0 ? parts[parts.length-1] : '';
+                                if (last) saveSuggestion('brand', last);
+                            }}
+                        />
+                        {specSuggestions.brand && specSuggestions.brand.length > 0 && (
+                            <div className="suggestion-badges" style={{ marginTop: 8 }}>
+                                {specSuggestions.brand.map((s) => (
+                                    <button
+                                        type="button"
+                                        key={s}
+                                        className="suggestion-badge"
+                                        onClick={() => {
+                                            setFormData((p:any) => {
+                                                const current = p.categories || [];
+                                                if (current.includes(s)) return p;
+                                                return { ...p, categories: [...current, s] };
+                                            });
+                                        }}
+                                    >{s}</button>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                    <div className="form-group">
+                        <label>Kondisi</label>
+                        <select name="condition" value={formData.condition} onChange={handleChange}>
+                            <option value="second">Second</option>
+                            <option value="new">New</option>
+                        </select>
+                    </div>
                 </div>
 
                 <div className="form-row-compact" style={{gridTemplateColumns: '1fr 1fr'}}>
@@ -292,13 +283,6 @@ export const LaptopForm: React.FC<LaptopFormProps> = ({ laptop, onSave, onCancel
                                 )}
                             </div>
                         </div>
-                        <div className="form-group">
-                            <label>Kondisi</label>
-                            <select name="condition" value={formData.condition} onChange={handleChange}>
-                                <option value="second">Second</option>
-                                <option value="new">New</option>
-                            </select>
-                        </div>
                     </div>
                 </div>
 
@@ -323,6 +307,11 @@ export const LaptopForm: React.FC<LaptopFormProps> = ({ laptop, onSave, onCancel
                             {formData.features.map((f:string) => (<span key={f} className="facility-badge">{f}</span>))}
                         </div>
                     )}
+                </div>
+
+                <div className="form-group">
+                    <label>Deskripsi</label>
+                    <ReactQuill theme="snow" value={formData.description || ''} onChange={handleDescriptionChange} />
                 </div>
 
                 <div className="form-actions"><button type="button" className="btn btn-secondary" onClick={onCancel} disabled={isSaving}>Batal</button>
