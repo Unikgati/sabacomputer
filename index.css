@@ -1443,6 +1443,50 @@ body.dark .wishlist-btn:hover {
     font-weight: 600;
 }
 
+/* Specs card/table for laptop detail page */
+.specs-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    overflow: hidden;
+}
+.specs-card h3 { margin: 0; }
+.specs-card .specs-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+.specs-card .specs-table th,
+.specs-card .specs-table td {
+    padding: 0.85rem 1rem;
+    vertical-align: middle;
+    color: var(--text-primary);
+    font-size: 0.98rem;
+}
+.specs-card .specs-table tr:nth-child(odd) td {
+    background: var(--bg-primary);
+}
+.specs-card .specs-table tr:nth-child(even) td {
+    background: transparent;
+}
+
+/* Ensure good contrast in dark mode specifically */
+body.dark .specs-card {
+    background: color-mix(in srgb, var(--bg-secondary-dark) 70%, rgba(255,255,255,0.02));
+    border-color: var(--border-dark);
+}
+body.dark .specs-card .specs-table th,
+body.dark .specs-card .specs-table td {
+    color: var(--text-primary-dark);
+}
+body.dark .specs-card .specs-table tr:nth-child(odd) td {
+    background: rgba(255,255,255,0.02);
+}
+body.dark .specs-card .specs-table tr:nth-child(even) td {
+    background: transparent;
+}
+
+
 .sticky-booking-bar {
     position: fixed;
     bottom: 0;
@@ -2001,81 +2045,6 @@ body.dark .discount-badge {
     transition: all 0.3s ease-in-out;
     overflow: hidden;
 }
-
-/* ==========================================================================
-     Laptop detail: Specs card and accessory pills
-     ========================================================================== */
-.specs-card {
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
-    border-radius: 12px;
-    overflow: hidden;
-}
-.specs-card h3 { margin: 0; color: var(--text-primary); }
-.specs-card .specs-table th,
-.specs-card .specs-table td {
-    padding: 0.9rem 1rem;
-    vertical-align: middle;
-    color: var(--text-primary);
-    font-size: 0.95rem;
-}
-.specs-card .specs-table th {
-    width: 40%;
-    font-weight: 700;
-    color: var(--text-secondary);
-}
-.specs-card .specs-table tr { border-bottom: 1px solid var(--border-color); }
-.specs-card .specs-table tr:last-child { border-bottom: none; }
-
-/* Row striping: subtle in light mode, light in dark mode */
-.specs-card .specs-table tr:nth-child(even) {
-    background: rgba(0,0,0,0.02);
-}
-body.dark .specs-card .specs-table tr:nth-child(even) {
-    background: rgba(255,255,255,0.02);
-}
-
-/* Make table more 'card-like' on small screens */
-@media (max-width: 720px) {
-    .specs-card .specs-table th, .specs-card .specs-table td { padding: 0.75rem 0.75rem; }
-}
-
-/* Accessories pills */
-.accessories-section { margin-top: 1rem; }
-.accessory-pills {
-    display: flex;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-    margin-top: 0.5rem;
-}
-.accessory-pill {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.35rem 0.65rem;
-    border-radius: 999px;
-    background: var(--bg-secondary);
-    color: var(--text-primary);
-    border: 1px solid var(--border-color);
-    font-weight: 600;
-    font-size: 0.9rem;
-}
-.accessory-pill .dot {
-    width: 8px; height: 8px; border-radius: 50%; margin-right: 0.5rem; background: var(--accent);
-}
-
-/* Accent variant for highlighting included/important accessories */
-.accessory-pill--accent {
-    background: var(--accent);
-    color: #fff;
-    border-color: var(--accent);
-}
-
-/* Dark-mode adjustments to pills to keep contrast */
-body.dark .accessory-pill {
-    background: var(--bg-primary);
-    color: var(--text-primary);
-}
-
 
 /* Suggestion badges for spec inputs (Laptop Form) */
 .suggestion-badges {
