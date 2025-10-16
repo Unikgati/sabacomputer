@@ -166,7 +166,7 @@ export const LaptopForm: React.FC<LaptopFormProps> = ({ laptop, onSave, onCancel
         if (name) {
             let intro = `${name}`;
             if (brands) intro += ` dari ${brands}`;
-            intro += ` merupakan ${formData.condition === 'new' ? 'unit baru' : 'unit bekas'}`;
+            intro += ` merupakan ${formData.condition === 'new' ? 'unit baru' : 'unit second'}`;
             if (gradeText && formData.condition !== 'new') intro += ` dengan ${gradeText}`;
             if (formData.price) intro += `, ditawarkan dengan harga Rp ${formatPrice(formData.price)}`;
             intro += `.`;
