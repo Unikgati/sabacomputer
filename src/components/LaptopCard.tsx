@@ -55,10 +55,6 @@ const LaptopCardComponent: React.FC<LaptopCardProps> = ({ laptop, onViewDetail, 
             <span className="price-label">Harga</span>
             <p className="card-price">{formattedPrice}</p>
           </div>
-          <div className="card-actions">
-            <button className="btn btn-secondary" onClick={(e) => { e.stopPropagation(); onViewDetail(laptop); }}>Detail</button>
-            {onBuyNow && <button className="btn btn-primary" onClick={(e) => { e.stopPropagation(); onBuyNow(laptop); }}>Beli</button>}
-          </div>
         </div>
       </div>
     </article>

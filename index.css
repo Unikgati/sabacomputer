@@ -811,8 +811,8 @@ body.dark .search-bar {
 }
 
 .card-image-container {
-  position: relative;
-  aspect-ratio: 4 / 3;
+    position: relative;
+    aspect-ratio: 1 / 1; /* enforce square thumbnails for product cards */
     overflow: hidden;
 }
 
