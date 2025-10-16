@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import DOMPurify from 'dompurify';
 import Seo from '../components/Seo';
+import { useNavigate } from 'react-router-dom';
 import { useWishlist } from '../contexts/WishlistContext';
 import { HeartIcon } from '../components/Icons';
-import { useNavigate } from 'react-router-dom';
 
 interface LaptopDetailPageProps {
   laptop: any;
@@ -44,23 +44,6 @@ export const LaptopDetailPage: React.FC<LaptopDetailPageProps> = ({ laptop, setP
   }, [imgs.length]);
 
   if (isLoading) return <div className="page-container"><div className="container">Memuat...</div></div>;
-
-  // Small inline component to show wishlist toggle inside sticky bar
-  const WishlistInSticky: React.FC<{ laptop: any }> = ({ laptop }) => {
-    const { isInWishlist, addToWishlist, removeFromWishlist } = useWishlist();
-    const id = laptop?.id;
-    const isWishlisted = isInWishlist(id);
-    const handle = (e: React.MouseEvent) => {
-      e.stopPropagation();
-      if (isWishlisted) removeFromWishlist(id);
-      else addToWishlist(id);
-    };
-    return (
-      <button className={`wishlist-btn sticky-wishlist-btn ${isWishlisted ? 'active' : ''}`} aria-label={isWishlisted ? 'Hapus dari wishlist' : 'Tambah ke wishlist'} onClick={handle}>
-        <HeartIcon filled={isWishlisted} />
-      </button>
-    );
-  };
 
   return (
     <div className="page-container laptop-detail-page">
@@ -211,20 +194,35 @@ export const LaptopDetailPage: React.FC<LaptopDetailPageProps> = ({ laptop, setP
 
       {/* Sticky buy bar (similar to destination) */}
       <div className="sticky-booking-bar">
-        <div className="container booking-bar-content" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div>
-            <span className="booking-price-label">Harga</span>
-            <span className="booking-price" style={{ display: 'block', fontSize: '1.125rem', fontWeight: 700 }}>{formattedPrice}</span>
-          </div>
-              <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
-                {/* wishlist button will be shown here */}
-                <WishlistInSticky laptop={laptop} />
-                <button className="btn btn-primary btn-large" onClick={() => { try { onBuyNow && onBuyNow(laptop); } catch {} }}>Beli Sekarang</button>
+            <div className="container booking-bar-content" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div>
+                <span className="booking-price-label">Harga</span>
+                <span className="booking-price" style={{ display: 'block', fontSize: '1.125rem', fontWeight: 700 }}>{formattedPrice}</span>
               </div>
-        </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <button className="btn btn-primary btn-large" onClick={() => { try { onBuyNow && onBuyNow(laptop); } catch {} }}>Beli Sekarang</button>
+                {/* Wishlist button moved here */}
+                <WishlistButton laptopId={laptop.id} laptopName={laptop.name} />
+              </div>
+            </div>
       </div>
     </div>
   );
 };
 
 export default LaptopDetailPage;
+
+// small WishlistButton component to avoid repeating logic in other files
+const WishlistButton: React.FC<{ laptopId: number; laptopName?: string }> = ({ laptopId, laptopName }) => {
+  const { isInWishlist, addToWishlist, removeFromWishlist } = useWishlist();
+  const inList = isInWishlist(Number(laptopId));
+  const toggle = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (inList) removeFromWishlist(Number(laptopId)); else addToWishlist(Number(laptopId));
+  };
+  return (
+    <button className={`wishlist-btn ${inList ? 'active' : ''}`} onClick={toggle} aria-label={inList ? `Hapus ${laptopName} dari wishlist` : `Tambah ${laptopName} ke wishlist`}>
+      <HeartIcon filled={inList} />
+    </button>
+  );
+};
