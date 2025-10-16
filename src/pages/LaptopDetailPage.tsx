@@ -221,7 +221,25 @@ export const LaptopDetailPage: React.FC<LaptopDetailPageProps> = ({ laptop, setP
             <span className="booking-price" style={{ display: 'block', fontSize: '1.125rem', fontWeight: 700 }}>{formattedPrice}</span>
           </div>
           <div>
-            <button className="btn btn-primary btn-large" onClick={() => { try { onBuyNow && onBuyNow(laptop); } catch {} }}>Beli Sekarang</button>
+            {/* WhatsApp chat button: build URL from appSettings in localStorage with a custom message */}
+            {(() => {
+              let whatsappNumber = '';
+              try {
+                const stored = localStorage.getItem('appSettings');
+                if (stored) {
+                  const parsed = JSON.parse(stored);
+                  whatsappNumber = parsed?.whatsappNumber || parsed?.whatsappnumber || '';
+                }
+              } catch (e) { /* ignore and fallback */ }
+              // fallback default
+              if (!whatsappNumber) whatsappNumber = '6281234567890';
+              const clean = String(whatsappNumber).replace(/\D/g, '');
+              const message = `Saya ingin bertanya tentang ${laptop?.name || 'produk'} ini. -www.sabacomputer.com-`;
+              const url = `https://wa.me/${clean}?text=${encodeURIComponent(message)}`;
+              return (
+                <a href={url} className="btn btn-primary btn-large" target="_blank" rel="noopener noreferrer">Chat</a>
+              );
+            })()}
           </div>
         </div>
       </div>
