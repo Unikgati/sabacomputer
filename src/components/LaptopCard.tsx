@@ -1,6 +1,5 @@
 import React from 'react';
-import { useWishlist } from '../contexts/WishlistContext';
-import { HeartIcon } from './Icons';
+// wishlist button moved to laptop detail page; keep card minimal
 
 interface LaptopCardProps {
   laptop: any;
@@ -10,7 +9,6 @@ interface LaptopCardProps {
 }
 
 const LaptopCardComponent: React.FC<LaptopCardProps> = ({ laptop, onViewDetail, onBuyNow, showCategories = true }) => {
-  const { isInWishlist, addToWishlist, removeFromWishlist } = useWishlist();
   const id = laptop?.id;
   const name = laptop?.name || '';
   const imageUrl = laptop?.imageUrl || '';
@@ -19,13 +17,7 @@ const LaptopCardComponent: React.FC<LaptopCardProps> = ({ laptop, onViewDetail, 
   const formattedPrice = price ? new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(price) : '-';
   const categories = laptop?.categories || [];
 
-  const isWishlisted = isInWishlist(id);
-
-  const handleWishlistToggle = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (isWishlisted) removeFromWishlist(id);
-    else addToWishlist(id);
-  };
+  // wishlist handled on the laptop detail page
 
   const createSnippet = (htmlContent: string) => {
     const tempDiv = document.createElement('div');

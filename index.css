@@ -884,6 +884,17 @@ body.dark .wishlist-btn:hover {
     height: 22px;
 }
 
+/* Wishlist button on the laptop detail main image (larger, top-right overlay) */
+.main-image .wishlist-btn {
+    right: 12px;
+    top: 12px;
+    width: 44px;
+    height: 44px;
+    z-index: 40;
+    background-color: rgba(255,255,255,0.9);
+}
+.main-image .wishlist-btn svg { width: 20px; height: 20px; }
+
 .card-content {
   padding: 1.5rem;
   display: flex;
@@ -1669,20 +1680,6 @@ body.dark .specs-card .specs-table th.specs-key {
     color: var(--text-secondary);
     margin-left: 4px;
 }
-
-/* Sticky wishlist button in the booking bar */
-.sticky-wishlist-btn {
-    background: var(--bg-secondary);
-    border-radius: 8px;
-    padding: 0.4rem 0.6rem;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid var(--border-color);
-    color: var(--text-primary);
-}
-.sticky-wishlist-btn svg { width: 20px; height: 20px; }
-.sticky-wishlist-btn.active { color: #e53e3e; }
 
 /* ==========================================================================
    8. Blog Card & Grid

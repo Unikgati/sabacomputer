@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import DOMPurify from 'dompurify';
 import Seo from '../components/Seo';
-import { useNavigate } from 'react-router-dom';
 import { useWishlist } from '../contexts/WishlistContext';
 import { HeartIcon } from '../components/Icons';
+import { useNavigate } from 'react-router-dom';
 
 interface LaptopDetailPageProps {
   laptop: any;
@@ -13,6 +13,8 @@ interface LaptopDetailPageProps {
 
 export const LaptopDetailPage: React.FC<LaptopDetailPageProps> = ({ laptop, setPage, onBuyNow }) => {
   const [isLoading, setIsLoading] = useState(true);
+  const { isInWishlist, addToWishlist, removeFromWishlist } = useWishlist();
+  const isWishlisted = isInWishlist(laptop?.id);
   const imgs = useMemo(() => (Array.isArray(laptop.galleryImages) && laptop.galleryImages.length > 0) ? laptop.galleryImages : (laptop.imageUrl ? [laptop.imageUrl] : []), [laptop.galleryImages, laptop.imageUrl]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const mainImageContainerRef = useRef<HTMLDivElement | null>(null);
@@ -59,6 +61,13 @@ export const LaptopDetailPage: React.FC<LaptopDetailPageProps> = ({ laptop, setP
           <div className="left-column">
             <section className="gallery-container">
               <div className="main-image square" ref={(el) => (mainImageContainerRef.current = el)}>
+                <button
+                  className={`wishlist-btn ${isWishlisted ? 'active' : ''}`}
+                  onClick={(e) => { e.stopPropagation(); if (isWishlisted) removeFromWishlist(laptop?.id); else addToWishlist(laptop?.id); }}
+                  aria-label={isWishlisted ? `Hapus ${laptop?.name} dari wishlist` : `Tambah ${laptop?.name} ke wishlist`}
+                >
+                  <HeartIcon filled={isWishlisted} />
+                </button>
                 {imgs.length > 1 && (
                   <>
                     <button
@@ -194,35 +203,18 @@ export const LaptopDetailPage: React.FC<LaptopDetailPageProps> = ({ laptop, setP
 
       {/* Sticky buy bar (similar to destination) */}
       <div className="sticky-booking-bar">
-            <div className="container booking-bar-content" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <div>
-                <span className="booking-price-label">Harga</span>
-                <span className="booking-price" style={{ display: 'block', fontSize: '1.125rem', fontWeight: 700 }}>{formattedPrice}</span>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                <button className="btn btn-primary btn-large" onClick={() => { try { onBuyNow && onBuyNow(laptop); } catch {} }}>Beli Sekarang</button>
-                {/* Wishlist button moved here */}
-                <WishlistButton laptopId={laptop.id} laptopName={laptop.name} />
-              </div>
-            </div>
+        <div className="container booking-bar-content" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div>
+            <span className="booking-price-label">Harga</span>
+            <span className="booking-price" style={{ display: 'block', fontSize: '1.125rem', fontWeight: 700 }}>{formattedPrice}</span>
+          </div>
+          <div>
+            <button className="btn btn-primary btn-large" onClick={() => { try { onBuyNow && onBuyNow(laptop); } catch {} }}>Beli Sekarang</button>
+          </div>
+        </div>
       </div>
     </div>
   );
 };
 
 export default LaptopDetailPage;
-
-// small WishlistButton component to avoid repeating logic in other files
-const WishlistButton: React.FC<{ laptopId: number; laptopName?: string }> = ({ laptopId, laptopName }) => {
-  const { isInWishlist, addToWishlist, removeFromWishlist } = useWishlist();
-  const inList = isInWishlist(Number(laptopId));
-  const toggle = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (inList) removeFromWishlist(Number(laptopId)); else addToWishlist(Number(laptopId));
-  };
-  return (
-    <button className={`wishlist-btn ${inList ? 'active' : ''}`} onClick={toggle} aria-label={inList ? `Hapus ${laptopName} dari wishlist` : `Tambah ${laptopName} ke wishlist`}>
-      <HeartIcon filled={inList} />
-    </button>
-  );
-};
