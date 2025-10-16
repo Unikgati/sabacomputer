@@ -2,9 +2,9 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Destination, BlogPost, Page, HeroSlide, AppSettings } from '../types';
 import { LaptopCard } from '../components/LaptopCard';
-import { DestinationCard } from '../components/DestinationCard';
+// destination cards removed from homepage per request
 import { BlogCard } from '../components/BlogCard';
-import DestinationSkeleton from '../components/DestinationSkeleton';
+// destination skeleton removed
 import BlogSkeleton from '../components/BlogSkeleton';
 import { SearchIcon } from '../components/Icons';
 
@@ -186,78 +186,7 @@ const Hero = ({ onSearch, slides, categories }: { onSearch: (query: string) => v
     );
 };
 
-const PopularDestinations = ({ destinations, onViewDetail, onBookNow, isLoading }: { destinations: Destination[]; onViewDetail: (d: Destination) => void; onBookNow: (d: Destination) => void; isLoading?: boolean }) => (
-    <section className="destinations-section">
-        <div className="container">
-            <div className="section-header">
-                <h2>Destinasi Populer</h2>
-                <p>Paket wisata yang paling banyak diminati oleh para petualang seperti Anda.</p>
-            </div>
-            <div className="destinations-grid homepage-grid">
-                {isLoading ? Array.from({ length: 4 }).map((_, i) => <DestinationSkeleton key={i} />) : destinations.slice(0, 4).map(dest => <DestinationCard key={dest.id} destination={dest} onViewDetail={onViewDetail} onBookNow={onBookNow} showCategories={false} />)}
-            </div>
-        </div>
-    </section>
-);
-
-const AllDestinationsSection = ({ destinations, onViewDetail, onBookNow, setPage }: { destinations: Destination[]; onViewDetail: (d: Destination) => void; onBookNow: (d: Destination) => void; setPage: (page: Page) => void; }) => {
-    const [selectedCategory, setSelectedCategory] = useState('Semua');
-    const navigate = useNavigate();
-
-    const categories = useMemo(() => {
-        const allCats = destinations.flatMap(d => d.categories || []);
-        const uniqueCats = ['Semua', ...Array.from(new Set(allCats)).sort()];
-        return uniqueCats;
-    }, [destinations]);
-
-    const filteredDestinations = useMemo(() => {
-        if (selectedCategory === 'Semua') {
-            return destinations;
-        }
-        return destinations.filter(d => d.categories?.includes(selectedCategory));
-    }, [destinations, selectedCategory]);
-
-    return (
-        <section className="destinations-section" style={{ backgroundColor: 'var(--bg-secondary)' }}>
-            <div className="container">
-                <div className="section-header">
-                    <h2>Jelajahi Semua Destinasi</h2>
-                    <p>Dari pegunungan hingga lautan, temukan petualangan yang menanti Anda.</p>
-                </div>
-
-                {categories.length > 1 && (
-                    <div className="category-filter-list">
-                        {categories.map(cat => (
-                            <button 
-                                key={cat}
-                                className={`category-filter-pill ${selectedCategory === cat ? 'active' : ''}`}
-                                onClick={() => setSelectedCategory(cat)}
-                            >
-                                {cat}
-                            </button>
-                        ))}
-                    </div>
-                )}
-                
-                {filteredDestinations.length > 0 ? (
-                    <div className="destinations-grid homepage-grid">
-                        {filteredDestinations.slice(0, 6).map(dest => <DestinationCard key={dest.id} destination={dest} onViewDetail={onViewDetail} onBookNow={onBookNow} showCategories={false} />)}
-                    </div>
-                ) : (
-                    <div className="no-results" style={{ padding: '1rem 0' }}>
-                        <p>Tidak ada destinasi yang cocok dengan kategori "{selectedCategory}".</p>
-                    </div>
-                )}
-                
-                {destinations.length > 6 && (
-                    <div className="section-footer">
-                        <button className="btn btn-primary" onClick={() => { navigate('/destinations'); try { setPage && setPage('destinations'); } catch {} }}>Lihat Semua Destinasi</button>
-                    </div>
-                )}
-            </div>
-        </section>
-    );
-};
+// Destination sections removed from homepage per request
 
 
 const BlogSection = ({ blogPosts, setPage, onViewDetail, isLoading }: { blogPosts: BlogPost[], setPage: (page: Page) => void, onViewDetail: (post: BlogPost) => void, isLoading?: boolean }) => {
@@ -312,13 +241,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onSearch, onViewDetail, onBo
                 siteName={appSettings?.brandName || 'TravelGo'}
             />
             <Hero onSearch={onSearch} slides={appSettings.heroSlides} categories={categories} />
-            <PopularDestinations destinations={destinations} onViewDetail={onViewDetail} onBookNow={openBookingFromCard} isLoading={isLoading} />
-            <AllDestinationsSection 
-                destinations={destinations} 
-                onViewDetail={onViewDetail} 
-                onBookNow={openBookingFromCard}
-                setPage={setPage}
-            />
+            {/* Destinations sections removed from homepage per request */}
 
             {/* Laptop products section */}
             <section className="laptops-section" style={{ padding: '40px 0' }}>
@@ -347,7 +270,9 @@ export const HomePage: React.FC<HomePageProps> = ({ onSearch, onViewDetail, onBo
                     )}
                 </div>
             </section>
-            <BlogSection blogPosts={blogPosts} setPage={setPage} onViewDetail={onViewBlogDetail} isLoading={isLoading} />
+            {blogPosts && blogPosts.length > 0 && (
+                <BlogSection blogPosts={blogPosts} setPage={setPage} onViewDetail={onViewBlogDetail} isLoading={isLoading} />
+            )}
             {reviews && reviews.length > 0 && (
                 <section className="reviews-section" style={{ padding: '60px 0' }}>
                     <div className="container">
