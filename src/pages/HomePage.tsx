@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Destination, BlogPost, Page, HeroSlide, AppSettings } from '../types';
-import { DestinationCard } from '../components/DestinationCard';
 import { LaptopCard } from '../components/LaptopCard';
+import { DestinationCard } from '../components/DestinationCard';
 import { BlogCard } from '../components/BlogCard';
 import DestinationSkeleton from '../components/DestinationSkeleton';
 import BlogSkeleton from '../components/BlogSkeleton';
@@ -16,6 +16,7 @@ interface HomePageProps {
     onViewBlogDetail: (post: BlogPost) => void;
     setPage: (page: Page) => void;
     destinations: Destination[];
+    laptops: any[];
     blogPosts: BlogPost[];
     appSettings: AppSettings;
     isLoading?: boolean;
@@ -185,47 +186,43 @@ const Hero = ({ onSearch, slides, categories }: { onSearch: (query: string) => v
     );
 };
 
-const PopularDestinations = ({ destinations, allLaptops, onViewDetail, onBookNow, onBuyNow, isLoading }: { destinations: Destination[]; allLaptops?: any[]; onViewDetail: (d: Destination | any) => void; onBookNow?: (d: Destination | any) => void; onBuyNow?: (d: Destination | any) => void; isLoading?: boolean }) => {
-    const products = (allLaptops && allLaptops.length) ? allLaptops : destinations;
-    const handleBuy = onBuyNow || onBookNow;
-    return (
+const PopularDestinations = ({ destinations, onViewDetail, onBookNow, isLoading }: { destinations: Destination[]; onViewDetail: (d: Destination) => void; onBookNow: (d: Destination) => void; isLoading?: boolean }) => (
     <section className="destinations-section">
         <div className="container">
             <div className="section-header">
-                <h2>Produk Populer</h2>
-                <p>Produk laptop unggulan yang tersedia di toko kami.</p>
+                <h2>Destinasi Populer</h2>
+                <p>Paket wisata yang paling banyak diminati oleh para petualang seperti Anda.</p>
             </div>
             <div className="destinations-grid homepage-grid">
-                {isLoading ? Array.from({ length: 4 }).map((_, i) => <DestinationSkeleton key={i} />) : products.slice(0, 4).map((p: any) => <LaptopCard key={p.id} laptop={p} onViewDetail={onViewDetail} onBuyNow={handleBuy} showCategories={false} />)}
+                {isLoading ? Array.from({ length: 4 }).map((_, i) => <DestinationSkeleton key={i} />) : destinations.slice(0, 4).map(dest => <DestinationCard key={dest.id} destination={dest} onViewDetail={onViewDetail} onBookNow={onBookNow} showCategories={false} />)}
             </div>
         </div>
     </section>
-    );
-};
+);
 
-const AllDestinationsSection = ({ destinations, allLaptops, onViewDetail, onBuyNow, setPage }: { destinations: Destination[]; allLaptops?: any[]; onViewDetail: (d: Destination | any) => void; onBuyNow: (d: Destination | any) => void; setPage: (page: Page) => void; }) => {
+const AllDestinationsSection = ({ destinations, onViewDetail, onBookNow, setPage }: { destinations: Destination[]; onViewDetail: (d: Destination) => void; onBookNow: (d: Destination) => void; setPage: (page: Page) => void; }) => {
     const [selectedCategory, setSelectedCategory] = useState('Semua');
     const navigate = useNavigate();
 
-    const source = (allLaptops && allLaptops.length) ? allLaptops : destinations;
-
     const categories = useMemo(() => {
-        const allCats = source.flatMap((d: any) => d.categories || []);
+        const allCats = destinations.flatMap(d => d.categories || []);
         const uniqueCats = ['Semua', ...Array.from(new Set(allCats)).sort()];
         return uniqueCats;
-    }, [source]);
+    }, [destinations]);
 
-    const filtered = useMemo(() => {
-        if (selectedCategory === 'Semua') return source;
-        return source.filter((d: any) => (d.categories || []).includes(selectedCategory));
-    }, [source, selectedCategory]);
+    const filteredDestinations = useMemo(() => {
+        if (selectedCategory === 'Semua') {
+            return destinations;
+        }
+        return destinations.filter(d => d.categories?.includes(selectedCategory));
+    }, [destinations, selectedCategory]);
 
     return (
         <section className="destinations-section" style={{ backgroundColor: 'var(--bg-secondary)' }}>
             <div className="container">
                 <div className="section-header">
-                    <h2>Jelajahi Produk Kami</h2>
-                    <p>Temukan berbagai laptop berkualitas yang kami tawarkan.</p>
+                    <h2>Jelajahi Semua Destinasi</h2>
+                    <p>Dari pegunungan hingga lautan, temukan petualangan yang menanti Anda.</p>
                 </div>
 
                 {categories.length > 1 && (
@@ -242,19 +239,19 @@ const AllDestinationsSection = ({ destinations, allLaptops, onViewDetail, onBuyN
                     </div>
                 )}
                 
-                {filtered.length > 0 ? (
+                {filteredDestinations.length > 0 ? (
                     <div className="destinations-grid homepage-grid">
-                        {filtered.slice(0, 6).map((p:any) => <LaptopCard key={p.id} laptop={p} onViewDetail={onViewDetail} onBuyNow={onBuyNow} showCategories={false} />)}
+                        {filteredDestinations.slice(0, 6).map(dest => <DestinationCard key={dest.id} destination={dest} onViewDetail={onViewDetail} onBookNow={onBookNow} showCategories={false} />)}
                     </div>
                 ) : (
                     <div className="no-results" style={{ padding: '1rem 0' }}>
-                        <p>Tidak ada produk yang cocok dengan kategori "{selectedCategory}".</p>
+                        <p>Tidak ada destinasi yang cocok dengan kategori "{selectedCategory}".</p>
                     </div>
                 )}
                 
-                {source.length > 6 && (
+                {destinations.length > 6 && (
                     <div className="section-footer">
-                        <button className="btn btn-primary" onClick={() => { navigate('/laptops'); try { setPage && (setPage as any)('laptops'); } catch {} }}>Lihat Semua Produk</button>
+                        <button className="btn btn-primary" onClick={() => { navigate('/destinations'); try { setPage && setPage('destinations'); } catch {} }}>Lihat Semua Destinasi</button>
                     </div>
                 )}
             </div>
@@ -291,7 +288,7 @@ const BlogSection = ({ blogPosts, setPage, onViewDetail, isLoading }: { blogPost
     );
 }
 
-export const HomePage: React.FC<HomePageProps> = ({ onSearch, onViewDetail, onBookNow, onViewBlogDetail, setPage, destinations, blogPosts, appSettings, isLoading = false, reviews = [] }) => {
+export const HomePage: React.FC<HomePageProps> = ({ onSearch, onViewDetail, onBookNow, onViewBlogDetail, setPage, destinations, laptops = [], blogPosts, appSettings, isLoading = false, reviews = [] }) => {
     // derive categories from destinations to feed the hero typing placeholder
     const categories = React.useMemo(() => {
         if (!destinations) return [] as string[];
@@ -301,7 +298,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onSearch, onViewDetail, onBo
     const [activeBookingDest, setActiveBookingDest] = useState<Destination | null>(null);
     const navigate = useNavigate();
 
-    const openBookingFromCard = (dest: any) => {
+    const openBookingFromCard = (dest: Destination) => {
         try { onBookNow && onBookNow(dest); } catch { /* ignore */ }
     };
 
@@ -315,14 +312,41 @@ export const HomePage: React.FC<HomePageProps> = ({ onSearch, onViewDetail, onBo
                 siteName={appSettings?.brandName || 'TravelGo'}
             />
             <Hero onSearch={onSearch} slides={appSettings.heroSlides} categories={categories} />
-            <PopularDestinations destinations={destinations} allLaptops={(window as any).__INITIAL_LAPTOPS__ || []} onViewDetail={onViewDetail} onBuyNow={openBookingFromCard} isLoading={isLoading} />
+            <PopularDestinations destinations={destinations} onViewDetail={onViewDetail} onBookNow={openBookingFromCard} isLoading={isLoading} />
             <AllDestinationsSection 
                 destinations={destinations} 
-                allLaptops={(window as any).__INITIAL_LAPTOPS__ || []}
                 onViewDetail={onViewDetail} 
-                onBuyNow={openBookingFromCard}
+                onBookNow={openBookingFromCard}
                 setPage={setPage}
             />
+
+            {/* Laptop products section */}
+            <section className="laptops-section" style={{ padding: '40px 0' }}>
+                <div className="container">
+                    <div className="section-header">
+                        <h2>Produk Laptop</h2>
+                        <p>Temukan laptop pilihan kami dengan spesifikasi lengkap.</p>
+                    </div>
+                    <div className="destinations-grid homepage-grid">
+                        {isLoading ? (
+                            Array.from({ length: 4 }).map((_, i) => <div key={i} style={{ height: 220, background: 'var(--bg-secondary)', borderRadius: 8 }} />)
+                        ) : (laptops && laptops.length > 0 ? (
+                            laptops.slice(0, 6).map((l: any) => (
+                                <LaptopCard key={l.id} laptop={l} onViewDetail={onViewDetail as any} showCategories={true} />
+                            ))
+                        ) : (
+                            <div className="no-results" style={{ padding: '1rem 0' }}>
+                                <p>Belum ada produk laptop. Tambahkan dari dashboard admin.</p>
+                            </div>
+                        ))}
+                    </div>
+                    {laptops && laptops.length > 6 && (
+                        <div className="section-footer">
+                            <button className="btn btn-primary" onClick={() => { try { setPage && setPage('laptops'); } catch {} }}>Lihat Semua Produk</button>
+                        </div>
+                    )}
+                </div>
+            </section>
             <BlogSection blogPosts={blogPosts} setPage={setPage} onViewDetail={onViewBlogDetail} isLoading={isLoading} />
             {reviews && reviews.length > 0 && (
                 <section className="reviews-section" style={{ padding: '60px 0' }}>
