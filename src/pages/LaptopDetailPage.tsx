@@ -47,34 +47,48 @@ export const LaptopDetailPage: React.FC<LaptopDetailPageProps> = ({ laptop, setP
           </div>
         </section>
 
-        <div className="destination-content-layout">
-          <main className="destination-main-content">
-            {/* Unified content: Description -> Specs (modern rounded table) -> Accessories */}
-            <section className="laptop-unified-content">
-              <div className="blog-detail-content" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(laptop.description || '') }} />
-
-              <div className="specs-card specs-card--shadow" style={{ marginTop: '1.25rem' }}>
-                <div className="specs-card-header">
-                  <h3>Spesifikasi</h3>
+        <div className="laptop-detail-grid">
+          <div className="left-column">
+            <section className="gallery-container">
+              <div className="main-image square" ref={(el) => (mainImageContainerRef.current = el)}>
+                <div className="main-image-track" style={{ transform: `translateX(${-currentIndex * 100}%)` }}>
+                  {imgs.map((src:string, idx:number) => (
+                    <div key={idx} className={`main-image-slide ${idx === currentIndex ? 'active' : ''}`} style={{ backgroundImage: `url(${src})` }} />
+                  ))}
                 </div>
-                <table className="specs-table">
-                  <tbody>
-                    {[
-                      ['RAM', laptop.ram || '-'],
-                      ['Storage', laptop.storage || '-'],
-                      ['CPU', laptop.cpu || '-'],
-                      ['Layar', laptop.displayInch ? `${laptop.displayInch} inch` : '-'],
-                      ['Kondisi', laptop.condition || '-'],
-                      ['Grade', laptop.grade || '-'],
-                    ].map(([k, v], i) => (
-                      <tr key={String(k)} className="specs-row">
-                        <th className="specs-key">{k}</th>
-                        <td className="specs-val">{v}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
               </div>
+              <div className="thumbnail-grid">
+                {imgs.map((img:string, idx:number) => (
+                  <button key={idx} className={`thumbnail ${idx === currentIndex ? 'active' : ''}`} onClick={() => setCurrentIndex(idx)} aria-label={`Lihat gambar ${idx+1}`}>
+                    <img src={img} alt={`Thumbnail ${idx+1}`} loading="lazy" decoding="async" />
+                  </button>
+                ))}
+              </div>
+              <div className="blog-detail-content" style={{ marginTop: '1rem' }} dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(laptop.description || '') }} />
+            </section>
+          </div>
+          <aside className="right-column">
+            <div className="specs-card specs-card--shadow" style={{ marginTop: 0 }}>
+              <div className="specs-card-header">
+                <h3>Spesifikasi</h3>
+              </div>
+              <table className="specs-table">
+                <tbody>
+                  {[
+                    ['RAM', laptop.ram || '-'],
+                    ['Storage', laptop.storage || '-'],
+                    ['CPU', laptop.cpu || '-'],
+                    ['Layar', laptop.displayInch ? `${laptop.displayInch} inch` : '-'],
+                    ['Kondisi', laptop.condition || '-'],
+                    ['Grade', laptop.grade || '-'],
+                  ].map(([k, v], i) => (
+                    <tr key={String(k)} className="specs-row">
+                      <th className="specs-key">{k}</th>
+                      <td className="specs-val">{v}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
 
               {(laptop.accessories && laptop.accessories.length > 0) && (
                 <section className="accessories-section" style={{ marginTop: '1rem' }}>
@@ -86,8 +100,8 @@ export const LaptopDetailPage: React.FC<LaptopDetailPageProps> = ({ laptop, setP
                   </div>
                 </section>
               )}
-            </section>
-          </main>
+            </div>
+          </aside>
         </div>
       </div>
 

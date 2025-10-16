@@ -1546,6 +1546,31 @@ body.dark .specs-card .specs-table th.specs-key {
     color: var(--text-primary);
 }
 
+/* Laptop detail page: two-column responsive layout */
+.laptop-detail-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+}
+.laptop-detail-grid .left-column { order: 1; }
+.laptop-detail-grid .right-column { order: 2; }
+
+/* Make main image square and keep thumbnails below */
+.main-image.square { width: 100%; padding-top: 100%; position: relative; overflow: hidden; border-radius: 12px; }
+.main-image.square .main-image-track { position: absolute; inset: 0; }
+.main-image.square .main-image-slide { height: 100%; }
+
+@media (min-width: 880px) {
+    .laptop-detail-grid {
+        grid-template-columns: 1fr 360px; /* left gallery + right specs */
+        align-items: start;
+    }
+    .laptop-detail-grid .left-column { order: 1; }
+    .laptop-detail-grid .right-column { order: 2; }
+    .right-column { position: relative; }
+    .right-column .specs-card { position: sticky; top: 120px; }
+}
+
 .booking-bar-content {
     display: flex;
     justify-content: space-between;
