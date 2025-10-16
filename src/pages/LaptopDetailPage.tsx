@@ -30,22 +30,7 @@ export const LaptopDetailPage: React.FC<LaptopDetailPageProps> = ({ laptop, setP
           <h1>{laptop.name}</h1>
         </div>
 
-        <section className="gallery-container">
-          <div className="main-image" ref={(el) => (mainImageContainerRef.current = el)}>
-            <div className="main-image-track" style={{ transform: `translateX(${-currentIndex * 100}%)` }}>
-              {imgs.map((src:string, idx:number) => (
-                <div key={idx} className={`main-image-slide ${idx === currentIndex ? 'active' : ''}`} style={{ backgroundImage: `url(${src})` }} />
-              ))}
-            </div>
-          </div>
-          <div className="thumbnail-grid">
-            {imgs.map((img:string, idx:number) => (
-              <button key={idx} className={`thumbnail ${idx === currentIndex ? 'active' : ''}`} onClick={() => setCurrentIndex(idx)} aria-label={`Lihat gambar ${idx+1}`}>
-                <img src={img} alt={`Thumbnail ${idx+1}`} loading="lazy" decoding="async" />
-              </button>
-            ))}
-          </div>
-        </section>
+        
 
         <div className="laptop-detail-grid">
           <div className="left-column">
