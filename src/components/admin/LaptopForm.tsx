@@ -406,11 +406,7 @@ export const LaptopForm: React.FC<LaptopFormProps> = ({ laptop, onSave, onCancel
                             );
                         })}
                     </div>
-                    {formData.features && formData.features.length > 0 && (
-                        <div className="suggestion-badges" style={{ marginTop: 8 }}>
-                            {formData.features.map((f:string) => (<span key={f} className="facility-badge">{f}</span>))}
-                        </div>
-                    )}
+                    {/* selected features are represented by chip state; no duplicate badges needed */}
                 </div>
 
                 <div className="form-group">
@@ -432,11 +428,7 @@ export const LaptopForm: React.FC<LaptopFormProps> = ({ laptop, onSave, onCancel
                             );
                         })}
                     </div>
-                    {formData.accessories && formData.accessories.length > 0 && (
-                        <div className="suggestion-badges" style={{ marginTop: 8 }}>
-                            {formData.accessories.map((a:string)=> (<span key={a} className="facility-badge">{a}</span>))}
-                        </div>
-                    )}
+                    {/* selected accessories are represented by chip state; no duplicate badges needed */}
                 </div>
 
                 <div className="form-group">
