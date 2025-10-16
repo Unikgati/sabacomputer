@@ -67,9 +67,9 @@ export const LaptopDetailPage: React.FC<LaptopDetailPageProps> = ({ laptop, setP
                       ['Kondisi', laptop.condition || '-'],
                       ['Grade', laptop.grade || '-'],
                     ].map(([k, v], i) => (
-                      <tr key={String(k)} style={{ background: i % 2 === 0 ? '#fff' : '#fbfbfb' }}>
-                        <th style={{ textAlign: 'left', padding: '0.85rem 1rem', width: '40%', fontWeight: 600 }}>{k}</th>
-                        <td style={{ padding: '0.85rem 1rem' }}>{v}</td>
+                      <tr key={String(k)} className="specs-row">
+                        <th className="specs-key">{k}</th>
+                        <td className="specs-val">{v}</td>
                       </tr>
                     ))}
                   </tbody>

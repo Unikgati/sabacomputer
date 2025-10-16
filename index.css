@@ -1443,50 +1443,6 @@ body.dark .wishlist-btn:hover {
     font-weight: 600;
 }
 
-/* Specs card/table for laptop detail page */
-.specs-card {
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
-    border-radius: 12px;
-    overflow: hidden;
-}
-.specs-card h3 { margin: 0; }
-.specs-card .specs-table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-}
-.specs-card .specs-table th,
-.specs-card .specs-table td {
-    padding: 0.85rem 1rem;
-    vertical-align: middle;
-    color: var(--text-primary);
-    font-size: 0.98rem;
-}
-.specs-card .specs-table tr:nth-child(odd) td {
-    background: var(--bg-primary);
-}
-.specs-card .specs-table tr:nth-child(even) td {
-    background: transparent;
-}
-
-/* Ensure good contrast in dark mode specifically */
-body.dark .specs-card {
-    background: color-mix(in srgb, var(--bg-secondary-dark) 70%, rgba(255,255,255,0.02));
-    border-color: var(--border-dark);
-}
-body.dark .specs-card .specs-table th,
-body.dark .specs-card .specs-table td {
-    color: var(--text-primary-dark);
-}
-body.dark .specs-card .specs-table tr:nth-child(odd) td {
-    background: rgba(255,255,255,0.02);
-}
-body.dark .specs-card .specs-table tr:nth-child(even) td {
-    background: transparent;
-}
-
-
 .sticky-booking-bar {
     position: fixed;
     bottom: 0;
@@ -1498,6 +1454,43 @@ body.dark .specs-card .specs-table tr:nth-child(even) td {
     z-index: 900;
     border-top: 1px solid var(--border-color);
 }
+
+/* Laptop specs card styling (adaptive for light/dark themes) */
+.specs-card {
+    border: 1px solid var(--border-color);
+    background: var(--bg-primary);
+}
+.specs-card .specs-table th.specs-key {
+    text-align: left;
+    padding: 0.85rem 1rem;
+    width: 40%;
+    font-weight: 600;
+    color: var(--text-secondary);
+    background: transparent;
+}
+.specs-card .specs-table td.specs-val {
+    padding: 0.85rem 1rem;
+    color: var(--text-primary);
+}
+.specs-card .specs-table tr.specs-row:nth-child(odd) {
+    background: color-mix(in srgb, var(--bg-primary) 92%, transparent);
+}
+.specs-card .specs-table tr.specs-row:nth-child(even) {
+    background: color-mix(in srgb, var(--bg-primary) 96%, transparent);
+}
+
+/* Ensure higher contrast in dark mode (override subtle backgrounds) */
+body.dark .specs-card .specs-table tr.specs-row:nth-child(odd) {
+    background: color-mix(in srgb, var(--bg-secondary) 96%, transparent);
+}
+body.dark .specs-card .specs-table tr.specs-row:nth-child(even) {
+    background: color-mix(in srgb, var(--bg-secondary) 92%, transparent);
+}
+
+/* Rounded corners for the specs card and responsive table */
+.specs-card { border-radius: 12px; overflow: hidden; }
+.specs-card .specs-table { width: 100%; border-collapse: separate; border-spacing: 0; }
+.specs-card .specs-table th, .specs-card .specs-table td { border: none; }
 
 .booking-bar-content {
     display: flex;
