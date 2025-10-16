@@ -62,6 +62,14 @@ export default async function handler(req, res) {
       categories: 'categories'
     };
 
+    // map new spec fields
+    keyMap.ram = 'ram';
+    keyMap.storage = 'storage';
+    keyMap.cpu = 'cpu';
+    keyMap.displayInch = 'display_inch';
+    keyMap.condition = 'condition';
+    keyMap.features = 'features';
+
     const safePayload = {};
     for (const srcKey of Object.keys(payload)) {
       const normalized = keyMap[srcKey] || srcKey.toLowerCase();
@@ -85,6 +93,10 @@ export default async function handler(req, res) {
     if ('inclusions' in safePayload && Array.isArray(safePayload.inclusions)) safePayload.inclusions = toPgArrayLiteral(safePayload.inclusions);
     if ('categories' in safePayload && Array.isArray(safePayload.categories)) safePayload.categories = toPgArrayLiteral(safePayload.categories);
     if ('gallery_public_ids' in safePayload && Array.isArray(safePayload.gallery_public_ids)) safePayload.gallery_public_ids = toPgArrayLiteral(safePayload.gallery_public_ids);
+    // Ensure features remains JSON (stringify if array)
+    if ('features' in safePayload && Array.isArray(safePayload.features)) {
+      try { safePayload.features = JSON.stringify(safePayload.features); } catch (e) { /* ignore */ }
+    }
 
     const extractCloudinaryPublicId = (url) => {
       if (!url || typeof url !== 'string') return null;
@@ -131,8 +143,8 @@ export default async function handler(req, res) {
 
     if ('removed_public_ids' in safePayload) { try { delete safePayload.removed_public_ids; } catch (e) {} }
 
-    const ensureJson = (k) => { if (!(k in safePayload)) return; try { if (typeof safePayload[k] === 'string') safePayload[k] = JSON.parse(safePayload[k]); } catch (e) {} };
-    ['galleryimages'].forEach(ensureJson);
+  const ensureJson = (k) => { if (!(k in safePayload)) return; try { if (typeof safePayload[k] === 'string') safePayload[k] = JSON.parse(safePayload[k]); } catch (e) {} };
+  ['galleryimages','features'].forEach(ensureJson);
 
     const insertResp = await fetch(`${SUPABASE_URL}/rest/v1/laptops?on_conflict=id`, {
       method: 'POST',

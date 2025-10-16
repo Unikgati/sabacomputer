@@ -12,6 +12,13 @@ interface Laptop {
     categories?: string[];
     imageUrl?: string;
     galleryImages?: string[];
+    // specs
+    ram?: string;
+    storage?: string;
+    cpu?: string;
+    displayInch?: number;
+    condition?: 'new' | 'second';
+    features?: string[];
 }
 
 interface AdminLaptopsPageProps {
