@@ -255,7 +255,15 @@ export const HomePage: React.FC<HomePageProps> = ({ onSearch, onViewDetail, onBo
                             Array.from({ length: 4 }).map((_, i) => <div key={i} style={{ height: 220, background: 'var(--bg-secondary)', borderRadius: 8 }} />)
                         ) : (laptops && laptops.length > 0 ? (
                             laptops.slice(0, 6).map((l: any) => (
-                                <LaptopCard key={l.id} laptop={l} onViewDetail={onViewDetail as any} showCategories={true} />
+                                <LaptopCard
+                                    key={l.id}
+                                    laptop={l}
+                                    showCategories={true}
+                                    onViewDetail={(lp: any) => {
+                                        try { setPage && setPage('laptopDetail'); } catch {}
+                                        try { navigate(`/laptops/${lp.slug || lp.id}`); } catch {}
+                                    }}
+                                />
                             ))
                         ) : (
                             <div className="no-results" style={{ padding: '1rem 0' }}>
