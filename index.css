@@ -1577,22 +1577,13 @@ body.dark .specs-card .specs-table th.specs-key {
 
 @media (min-width: 880px) {
     .laptop-detail-grid {
-        /* left gallery + wider right specs (make main image visually smaller) */
-        grid-template-columns: 1fr 420px;
+        grid-template-columns: 1fr 360px; /* left gallery + right specs */
         align-items: start;
     }
     .laptop-detail-grid .left-column { order: 1; }
     .laptop-detail-grid .right-column { order: 2; }
-    /* Make the entire right column sticky so the specs area stays visible while scrolling */
-    .right-column { position: sticky; top: 120px; align-self: start; }
-    /* inner specs-card can remain static inside the sticky column */
-    .right-column .specs-card { position: static; }
-
-    /* Constrain the visible main image on desktop so the right column appears wider
-       while keeping the 1:1 ratio. The .main-image.square will center and not exceed max-width. */
-    .left-column { display: flex; flex-direction: column; align-items: center; }
-    .left-column .main-image.square { max-width: 520px; width: 100%; }
-    .left-column .thumbnail-grid { justify-content: center; }
+    .right-column { position: relative; }
+    .right-column .specs-card { position: sticky; top: 120px; }
 }
 
 .booking-bar-content {
