@@ -1577,7 +1577,8 @@ body.dark .specs-card .specs-table th.specs-key {
 
 @media (min-width: 880px) {
     .laptop-detail-grid {
-        grid-template-columns: 1fr 360px; /* left gallery + right specs */
+        /* left gallery + wider right specs (make main image visually smaller) */
+        grid-template-columns: 1fr 420px;
         align-items: start;
     }
     .laptop-detail-grid .left-column { order: 1; }
@@ -1586,6 +1587,12 @@ body.dark .specs-card .specs-table th.specs-key {
     .right-column { position: sticky; top: 120px; align-self: start; }
     /* inner specs-card can remain static inside the sticky column */
     .right-column .specs-card { position: static; }
+
+    /* Constrain the visible main image on desktop so the right column appears wider
+       while keeping the 1:1 ratio. The .main-image.square will center and not exceed max-width. */
+    .left-column { display: flex; flex-direction: column; align-items: center; }
+    .left-column .main-image.square { max-width: 520px; width: 100%; }
+    .left-column .thumbnail-grid { justify-content: center; }
 }
 
 .booking-bar-content {
