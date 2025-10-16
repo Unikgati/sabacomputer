@@ -35,7 +35,7 @@ export const LaptopForm: React.FC<LaptopFormProps> = ({ laptop, onSave, onCancel
     const [customInclusion, setCustomInclusion] = useState('');
     const [isSaving, setIsSaving] = useState(false);
     const AVAILABLE_FEATURES = ['Touchscreen','360° Hinge','Backlit Keyboard','Fingerprint Reader','Dedicated GPU','Thunderbolt','Lightweight','Long Battery','Numeric Keypad','IPS Display'];
-    const [specSuggestions, setSpecSuggestions] = useState<Record<string, string[]>>({ ram: [], storage: [], cpu: [], displayInch: [] });
+    const [specSuggestions, setSpecSuggestions] = useState<Record<string, string[]>>({ ram: [], storage: [], cpu: [], displayInch: [], brand: [] });
 
     const handleChange = (e: any) => {
         const { name, value } = e.target;
@@ -190,7 +190,40 @@ export const LaptopForm: React.FC<LaptopFormProps> = ({ laptop, onSave, onCancel
                     />
                 </div>
 
-                <div className="form-group"><label>Kategori</label><input name="categories" value={(formData.categories || []).join(', ')} onChange={(e)=> setFormData((p:any)=>({...p, categories: String(e.target.value).split(',').map((s:string)=>s.trim()).filter(Boolean)}))} placeholder="pisahkan dengan koma" /></div>
+                <div className="form-group">
+                    <label>Brand</label>
+                    <input
+                        name="categories"
+                        value={(formData.categories || []).join(', ')}
+                        onChange={(e)=> setFormData((p:any)=>({...p, categories: String(e.target.value).split(',').map((s:string)=>s.trim()).filter(Boolean)}))}
+                        onBlur={(e) => {
+                            // save last token as brand suggestion
+                            const val = String(e.target.value || '');
+                            const parts = val.split(',').map(s=>s.trim()).filter(Boolean);
+                            const last = parts.length > 0 ? parts[parts.length-1] : '';
+                            if (last) saveSuggestion('brand', last);
+                        }}
+                        placeholder="pisahkan dengan koma (cth: Asus, Dell)"
+                    />
+                    {specSuggestions.brand && specSuggestions.brand.length > 0 && (
+                        <div className="suggestion-badges" style={{ marginTop: 8 }}>
+                            {specSuggestions.brand.map((s) => (
+                                <button
+                                    type="button"
+                                    key={s}
+                                    className="suggestion-badge"
+                                    onClick={() => {
+                                        setFormData((p:any) => {
+                                            const current = p.categories || [];
+                                            if (current.includes(s)) return p;
+                                            return { ...p, categories: [...current, s] };
+                                        });
+                                    }}
+                                >{s}</button>
+                            ))}
+                        </div>
+                    )}
+                </div>
 
                 <div className="form-row-compact" style={{gridTemplateColumns: '1fr 1fr'}}>
                     <div className="form-group"><label>Harga (IDR)</label>
