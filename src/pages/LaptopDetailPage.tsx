@@ -190,6 +190,17 @@ export const LaptopDetailPage: React.FC<LaptopDetailPageProps> = ({ laptop, setP
                   </div>
                 </section>
               )}
+
+              {(laptop.features && laptop.features.length > 0) && (
+                <section className="features-section" style={{ marginTop: '1rem' }}>
+                  <h3>Kelebihan</h3>
+                  <div className="features-badges" aria-label="Kelebihan">
+                    {(laptop.features || []).map((f:string, i:number) => (
+                      <span key={i} className="feature-badge" title={f}>{f}</span>
+                    ))}
+                  </div>
+                </section>
+              )}
             </div>
           </aside>
         </div>
