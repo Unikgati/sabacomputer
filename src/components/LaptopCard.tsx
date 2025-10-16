@@ -26,15 +26,34 @@ const LaptopCardComponent: React.FC<LaptopCardProps> = ({ laptop, onViewDetail, 
     return txt.slice(0, 180);
   };
 
-  // Limit CPU badge to max 13 characters, prefer cutting at last space to avoid mid-word truncation
+  // Limit CPU badge to max 13 characters without ellipsis.
+  // Strategy: build from space-separated tokens, but if a token contains a hyphen
+  // prefer the part before the hyphen (e.g. 'i5-7300U' -> 'i5'). Stop adding tokens
+  // when adding the next would exceed the limit. If no tokens fit, fall back to
+  // a hard slice of the trimmed string.
   const formatCpu = (cpu: string) => {
     if (!cpu) return '';
     const trimmed = cpu.trim();
-    if (trimmed.length <= 13) return trimmed;
-    const slice = trimmed.slice(0, 13);
-    const lastSpace = slice.lastIndexOf(' ');
-    if (lastSpace > 0) return slice.slice(0, lastSpace);
-    return slice;
+    const MAX = 13;
+    if (trimmed.length <= MAX) return trimmed;
+
+    const tokens = trimmed.split(/\s+/);
+    let out = '';
+    for (const t of tokens) {
+      if (!t) continue;
+      // prefer left side of hyphen if present
+      const candidate = t.includes('-') ? t.split('-')[0] : t;
+      const newLen = out ? out.length + 1 + candidate.length : candidate.length;
+      if (newLen <= MAX) {
+        out = out ? `${out} ${candidate}` : candidate;
+      } else {
+        // can't add candidate without exceeding MAX
+        break;
+      }
+    }
+    if (out) return out;
+    // fallback: hard slice (no ellipsis)
+    return trimmed.slice(0, MAX);
   };
 
   const snippet = createSnippet(laptop?.description || laptop?.longDescription || '');
