@@ -2747,6 +2747,7 @@ body.dark .admin-item-badge.out-of-stock {
 
 /* Give accessories section a little breathing room at the bottom */
 .accessories-section {
+    padding-top: 0;
     padding-bottom: 1rem;
 }
 
