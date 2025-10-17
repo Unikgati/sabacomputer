@@ -15,7 +15,7 @@ export const BlogPage: React.FC<BlogPageProps> = ({ blogPosts, onViewDetail, isL
         <div className="container">
             <div className="page-header">
                 <h1>{brandName ? `Blog ${brandName}` : 'Blog'}</h1>
-                <p>Inspirasi perjalanan dan panduan ahli dari tim kami.</p>
+                <p>Inspirasi dan panduan ahli seputar laptop dari tim kami.</p>
             </div>
             <div className="blog-grid">
                 {isLoading ? Array.from({ length: 6 }).map((_, i) => <BlogSkeleton key={i} />) : blogPosts.map(post => <BlogCard key={post.id} post={post} onViewDetail={onViewDetail} />)}
