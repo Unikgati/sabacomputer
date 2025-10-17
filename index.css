@@ -918,13 +918,6 @@ body.dark .wishlist-btn:hover {
   flex-grow: 1;
 }
 
-/* Mobile: reduce padding inside cards to make content denser on small screens */
-@media (max-width: 720px) {
-    .card-content {
-        padding: 0.5rem;
-    }
-}
-
 .card-category-list {
     display: flex;
     flex-wrap: wrap;
@@ -941,9 +934,9 @@ body.dark .wishlist-btn:hover {
 .card-spec-badge {
     background: var(--bg-secondary);
     color: var(--text-primary);
-    padding: 0.25rem 0.6rem;
+    padding: 0.2rem 0.5rem;
     border-radius: 999px;
-    font-size: 0.8rem;
+    font-size: 0.72rem;
     font-weight: 600;
     border: 1px solid var(--border-color);
 }
