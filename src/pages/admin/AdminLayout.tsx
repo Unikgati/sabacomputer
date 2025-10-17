@@ -148,7 +148,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
                     </div>
 
                     <Routes>
-                        <Route index element={<AdminDashboardPage laptopCount={safeLaptops.length} blogPostCount={safeBlogPosts.length} totalOrders={safeOrders.length} />} />
+                        <Route index element={<AdminDashboardPage laptopCount={safeLaptops.length} blogPostCount={safeBlogPosts.length} />} />
                         <Route path="blog" element={<AdminBlogPage blogPosts={safeBlogPosts} onSave={onSaveBlogPost} onDelete={onDeleteBlogPost} />} />
                         <Route path="laptops" element={onSaveLaptop ? <AdminLaptopsPage laptops={safeLaptops} onSave={onSaveLaptop} onDelete={onDeleteLaptop || (() => {})} /> : <div className="admin-page-container">Halaman Laptop belum dikonfigurasi.</div>} />
                         {/* Orders & invoices removed */}

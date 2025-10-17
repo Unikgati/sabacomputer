@@ -3,17 +3,12 @@ import React from 'react';
 interface AdminDashboardPageProps {
     laptopCount: number;
     blogPostCount: number;
-    totalOrders: number;
 }
 
-export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ laptopCount, blogPostCount, totalOrders }) => {
+export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ laptopCount, blogPostCount }) => {
     return (
         <div>
             <div className="dashboard-grid">
-                <div className="dashboard-card">
-                    <h3>Total Pesanan Masuk</h3>
-                    <p className="count">{totalOrders}</p>
-                </div>
                 <div className="dashboard-card">
                     <h3>Total Laptop</h3>
                     <p className="count">{laptopCount}</p>
