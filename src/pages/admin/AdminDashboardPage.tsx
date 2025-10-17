@@ -1,13 +1,12 @@
 import React from 'react';
 
 interface AdminDashboardPageProps {
-    destinationCount: number;
+    laptopCount: number;
     blogPostCount: number;
     totalOrders: number;
-    newOrders: number;
 }
 
-export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ destinationCount, blogPostCount, totalOrders, newOrders }) => {
+export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ laptopCount, blogPostCount, totalOrders }) => {
     return (
         <div>
             <div className="dashboard-grid">
@@ -16,12 +15,8 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ destinat
                     <p className="count">{totalOrders}</p>
                 </div>
                 <div className="dashboard-card">
-                    <h3>Pesanan Baru</h3>
-                    <p className="count">{newOrders}</p>
-                </div>
-                <div className="dashboard-card">
-                    <h3>Total Destinasi</h3>
-                    <p className="count">{destinationCount}</p>
+                    <h3>Total Laptop</h3>
+                    <p className="count">{laptopCount}</p>
                 </div>
                 <div className="dashboard-card">
                     <h3>Total Artikel Blog</h3>
