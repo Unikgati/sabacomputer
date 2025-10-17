@@ -1541,8 +1541,8 @@ body.dark .wishlist-btn:hover {
     border-radius: 999px;
     background: var(--accent);
     color: #fff;
-    font-size: 1rem; /* match specs font size */
-    font-weight: 600;
+    font-size: 0.88rem; /* slightly smaller */
+    font-weight: 500;
     border: 1px solid color-mix(in srgb, var(--accent) 12%, transparent);
 }
 body.dark .accessory-badge {
@@ -1584,8 +1584,8 @@ body.dark .accessory-badge {
     border-radius: 999px;
     background: #fff; /* white badge as requested */
     color: var(--accent);
-    font-size: 1rem;
-    font-weight: 600;
+    font-size: 0.88rem;
+    font-weight: 500;
     border: 1px solid var(--accent);
 }
 /* Dark mode: soften the white background so it doesn't glare, keep accent for border/text */
