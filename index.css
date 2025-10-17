@@ -3453,8 +3453,16 @@ textarea::placeholder {
 }
 .chip:active { transform: translateY(1px); }
 .chip--active {
-    background: color-mix(in srgb, var(--accent) 14%, var(--bg-primary));
+    /* Active chips use the accent color as background for clear affordance */
+    background: var(--accent);
     border-color: color-mix(in srgb, var(--accent) 36%, var(--border-color));
+    color: white; /* ensure contrast on light theme */
+}
+/* Dark mode: slightly soften the accent background and keep readable text */
+body.dark .chip--active {
+    background: color-mix(in srgb, var(--accent) 70%, #111 30%);
+    color: color-mix(in srgb, #ffffff 92%, var(--accent) 8%); /* near-white text */
+    border-color: color-mix(in srgb, var(--accent) 40%, #222 60%);
 }
 .chip:focus { outline: 3px solid color-mix(in srgb, var(--accent) 12%, transparent); }
 
