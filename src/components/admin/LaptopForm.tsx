@@ -216,50 +216,6 @@ export const LaptopForm: React.FC<LaptopFormProps> = ({ laptop, onSave, onCancel
             sentences.push(...extraSentences.map(s => s.endsWith('.') ? s : `${s}.`));
         }
 
-        // Infer likely use-cases from specs (simple heuristic rules)
-        const recommendations: string[] = [];
-        const cpu = String(formData.cpu || '').toLowerCase();
-        const ramValue = (String(formData.ram || '').match(/(\d+)/) || [])[1] ? Number((String(formData.ram || '').match(/(\d+)/) || [])[1]) : 0;
-        const storage = String(formData.storage || '').toLowerCase();
-        const hasDedicatedGpu = features.map((f:any) => String(f).toLowerCase()).some((f:any) => f.includes('gpu') || f.includes('dedicated'));
-        const longBattery = features.map((f:any) => String(f).toLowerCase()).some((f:any) => f.includes('battery') || f.includes('long')) || features.map((f:any)=>String(f).toLowerCase()).some(f=>f.includes('battery'));
-        const lightweight = features.map((f:any) => String(f).toLowerCase()).some((f:any) => f.includes('light') || f.includes('thin'));
-
-        // Office / Productivity: modest CPU, >=4-8GB RAM
-        if (ramValue >= 4 && ramValue < 16 && (cpu.includes('intel') || cpu.includes('amd') || ramValue >= 8)) {
-            recommendations.push('pekerjaan kantor/office');
-        }
-
-        // Design / Content creation: higher RAM and better CPU or dedicated GPU
-        if (ramValue >= 16 || cpu.includes('ryzen') || cpu.includes('core') && /i[5-9]|ryzen\s*[57-9]/.test(cpu) || hasDedicatedGpu) {
-            recommendations.push('desain grafis dan konten kreatif');
-        }
-
-        // Gaming: dedicated GPU or gaming-oriented keywords
-        if (hasDedicatedGpu || cpu.includes('hexa') || cpu.includes('octa') || cpu.includes('ryzen 7') || cpu.includes('i7') || cpu.includes('i9')) {
-            recommendations.push('gaming');
-        }
-
-        // Portability: lightweight + long battery
-        if (lightweight && longBattery) {
-            recommendations.push('mobilitas & bekerja di perjalanan');
-        } else if (lightweight) {
-            recommendations.push('mobilitas');
-        }
-
-        // Storage-heavy: large SSD/HDD indication
-        if (storage.match(/(1tb|2tb|500gb|512gb|256gb)/)) {
-            const s = storage.match(/(1tb|2tb)/) ? 'penyimpanan besar untuk koleksi file dan media' : 'penyimpanan cepat untuk aplikasi dan file';
-            recommendations.push(s);
-        }
-
-        // Deduplicate and format recommendations into human-friendly phrases
-        const uniqRec = Array.from(new Set(recommendations)).slice(0, 3);
-        if (uniqRec.length > 0) {
-            const recText = `Rekomendasi penggunaan: ${uniqRec.map(r => r.charAt(0).toUpperCase() + r.slice(1)).join(', ')}.`;
-            sentences.push(recText);
-        }
-
         let html = '';
         if (sentences.length > 0) {
             // join sentences with a single space to avoid newlines and wrap in one <p>
