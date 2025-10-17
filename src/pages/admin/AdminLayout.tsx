@@ -87,7 +87,6 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
                     </div>
                     <ul className="admin-nav">
                         <li><NavLink to="/admin" end className={({isActive}) => isActive ? 'active' : ''} onClick={() => setIsSidebarOpen(false)}>Dashboard</NavLink></li>
-                        <li><NavLink to="/admin/destinations" className={({isActive}) => isActive ? 'active' : ''} onClick={() => setIsSidebarOpen(false)}>Destinasi</NavLink></li>
                         <li><NavLink to="/admin/blog" className={({isActive}) => isActive ? 'active' : ''} onClick={() => setIsSidebarOpen(false)}>Blog</NavLink></li>
                         <li><NavLink to="/admin/laptops" className={({isActive}) => isActive ? 'active' : ''} onClick={() => setIsSidebarOpen(false)}>Laptop</NavLink></li>
                         <li><NavLink to="/admin/settings" className={({isActive}) => isActive ? 'active' : ''} onClick={() => setIsSidebarOpen(false)}>Pengaturan</NavLink></li>
@@ -150,7 +149,6 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
 
                     <Routes>
                         <Route index element={<AdminDashboardPage destinationCount={safeDestinations.length} blogPostCount={safeBlogPosts.length} totalOrders={safeOrders.length} newOrders={safeOrders.filter(o => o.status === 'Baru').length} />} />
-                        <Route path="destinations" element={<AdminDestinationsPage destinations={safeDestinations} onSave={onSaveDestination} onDelete={onDeleteDestination} />} />
                         <Route path="blog" element={<AdminBlogPage blogPosts={safeBlogPosts} onSave={onSaveBlogPost} onDelete={onDeleteBlogPost} />} />
                         <Route path="laptops" element={onSaveLaptop ? <AdminLaptopsPage laptops={safeLaptops} onSave={onSaveLaptop} onDelete={onDeleteLaptop || (() => {})} /> : <div className="admin-page-container">Halaman Laptop belum dikonfigurasi.</div>} />
                         {/* Orders & invoices removed */}
