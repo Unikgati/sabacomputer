@@ -178,9 +178,10 @@ export const LaptopForm: React.FC<LaptopFormProps> = ({ laptop, onSave, onCancel
         const condText = formData.condition === 'new' ? 'baru' : 'bekas';
         const gradeText = formData.grade ? `Grade ${formData.grade}` : '';
 
-        const paragraphs: string[] = [];
+        // Build a single-paragraph description: join all sentences into one <p> without line breaks
+        const sentences: string[] = [];
 
-        // Intro paragraph
+        // Intro sentence
         if (name) {
             let intro = `${name}`;
             if (brands) intro += ` dari ${brands}`;
@@ -188,10 +189,10 @@ export const LaptopForm: React.FC<LaptopFormProps> = ({ laptop, onSave, onCancel
             if (gradeText && formData.condition !== 'new') intro += ` dengan ${gradeText}`;
             if (formData.price) intro += `, ditawarkan dengan harga Rp ${formatPrice(formData.price)}`;
             intro += `.`;
-            paragraphs.push(`<p>${intro}</p>`);
+            sentences.push(intro);
         }
 
-        // Specs paragraph
+        // Specs sentence
         const specParts: string[] = [];
         if (formData.cpu) specParts.push(`${formData.cpu}`);
         if (formData.ram) specParts.push(`RAM ${formData.ram}`);
@@ -199,10 +200,10 @@ export const LaptopForm: React.FC<LaptopFormProps> = ({ laptop, onSave, onCancel
         if (formData.displayInch) specParts.push(`layar ${formData.displayInch}\"`);
         if (specParts.length > 0) {
             const specSentence = `Performa ditopang oleh ${specParts.join(', ').replace(/, ([^,]*)$/, ' dan $1')}.`;
-            paragraphs.push(`<p>${specSentence}</p>`);
+            sentences.push(specSentence);
         }
 
-        // Features & accessories paragraph
+        // Features & accessories sentence(s)
         const extraSentences: string[] = [];
         if (features.length > 0) {
             extraSentences.push(`Kelebihan utama meliputi ${features.join(', ').replace(/, ([^,]*)$/, ' dan $1')}`);
@@ -211,11 +212,18 @@ export const LaptopForm: React.FC<LaptopFormProps> = ({ laptop, onSave, onCancel
             extraSentences.push(`Kelengkapan yang disertakan: ${accessories.join(', ').replace(/, ([^,]*)$/, ' dan $1')}`);
         }
         if (extraSentences.length > 0) {
-            paragraphs.push(`<p>${extraSentences.join('. ')}.</p>`);
+            // join with a period so they remain separate sentences, but we'll combine all into one paragraph
+            sentences.push(...extraSentences.map(s => s.endsWith('.') ? s : `${s}.`));
         }
 
-        let html = paragraphs.join('');
-        if (!html) html = `<p>${name || 'Laptop ini'} — deskripsi singkat belum tersedia.</p>`;
+        let html = '';
+        if (sentences.length > 0) {
+            // join sentences with a single space to avoid newlines and wrap in one <p>
+            const oneParagraph = sentences.join(' ');
+            html = `<p>${oneParagraph}</p>`;
+        } else {
+            html = `<p>${name || 'Laptop ini'} — deskripsi singkat belum tersedia.</p>`;
+        }
 
         try { handleDescriptionChange(html); showToast('Deskripsi naratif telah digenerate', 'success'); } catch (e) { handleDescriptionChange(html); }
     };
