@@ -282,7 +282,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onSearch, onViewDetail, onBo
                     </div>
                     {laptops && laptops.length > 6 && (
                         <div className="section-footer">
-                            <button className="btn btn-primary" onClick={() => { try { setPage && setPage('laptops'); } catch {} }}>Lihat Semua Produk</button>
+                            <button className="btn btn-primary" onClick={() => { try { setPage && setPage('laptops'); } catch {} ; try { navigate('/laptops'); } catch {} }}>Lihat Semua Produk</button>
                         </div>
                     )}
                 </div>

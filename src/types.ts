@@ -64,3 +64,20 @@ export type AppSettings = {
   bankAccountHolder: string;
   heroSlides: HeroSlide[];
 };
+
+export type OrderStatus = 'Baru' | 'Menunggu Pembayaran' | 'Siap Jalan' | 'Selesai' | 'Dibatalkan';
+
+export type Order = {
+  id: number;
+  orderDate: string; // ISO date or date string
+  customerName: string;
+  customerPhone: string;
+  destinationId?: number;
+  destinationTitle?: string;
+  departureDate?: string | null; // YYYY-MM-DD
+  participants: number;
+  totalPrice: number;
+  status: OrderStatus;
+  paymentStatus?: 'DP' | 'Lunas';
+  notes?: string;
+};
