@@ -26,7 +26,7 @@ function upsertMeta(name: string, value: string, attr: 'name' | 'property' = 'na
 
 const Seo: React.FC<SeoProps> = ({ title, description, url, image, siteName, twitterHandle = '', jsonLd = null }) => {
   // If siteName not provided, try to read from localStorage.appSettings (set by App on load).
-  let effectiveSiteName = 'TravelGo';
+  let effectiveSiteName = 'Saba Computer';
   try {
     if (siteName && siteName.trim()) effectiveSiteName = siteName;
     else {
